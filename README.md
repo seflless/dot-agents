@@ -1,6 +1,12 @@
-# .agents
+# Agent Skills
 
 Backup of my `~/.agents` folder — a unified location for agent configurations and customizations.
+
+## Install a skill
+
+```bash
+npx skills add seflless/dot-agents
+```
 
 ## Purpose
 
