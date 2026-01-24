@@ -1,0 +1,33 @@
+.gitignore
+  0754ccc9b3ffb3a6 2-3
+install.sh
+  0754ccc9b3ffb3a6 1-23
+package.json
+  0754ccc9b3ffb3a6 1-17
+lib/claude.js
+  0754ccc9b3ffb3a6 1-42
+lib/watcher.js
+  0754ccc9b3ffb3a6 1-170
+bin/dot-agents.js
+  0754ccc9b3ffb3a6 1-121
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.0.37",
+  "base_commit_sha": "a8e07d4e8e2e63a3bc63cdf0796effa9a4358038",
+  "prompts": {
+    "0754ccc9b3ffb3a6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "093169e8-5ce1-4ab6-9fe4-7a330e6f2112",
+        "model": "claude-opus-4-5-20251101"
+      },
+      "human_author": "Francois Laberge <francoislaberge@gmail.com>",
+      "messages": [],
+      "total_additions": 378,
+      "total_deletions": 3,
+      "accepted_lines": 375,
+      "overriden_lines": 0
+    }
+  }
+}
