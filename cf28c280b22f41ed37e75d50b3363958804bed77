@@ -1,0 +1,29 @@
+skills/ask-repo/scripts/clone_repo.sh
+  5a389d5335b05d36 1-100
+skills/ask-repo/SKILL.md
+  5a389d5335b05d36 1-66
+LICENSE
+  5a389d5335b05d36 1-21
+skills/ask-repo/LICENSE.txt
+  5a389d5335b05d36 1-21
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.0.37",
+  "base_commit_sha": "cf28c280b22f41ed37e75d50b3363958804bed77",
+  "prompts": {
+    "5a389d5335b05d36": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b86213cd-3f87-4ad6-bc27-23e392e4faa5",
+        "model": "claude-opus-4-5-20251101"
+      },
+      "human_author": "Francois Laberge <francoislaberge@gmail.com>",
+      "messages": [],
+      "total_additions": 208,
+      "total_deletions": 0,
+      "accepted_lines": 208,
+      "overriden_lines": 0
+    }
+  }
+}
