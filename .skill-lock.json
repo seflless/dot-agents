@@ -45,6 +45,33 @@
       "skillFolderHash": "5f29940c0380af6c22e7078ab0cd54f4baa0fdba",
       "installedAt": "2026-01-24T11:46:56.000Z",
       "updatedAt": "2026-01-24T11:49:08.819Z"
+    },
+    "design-md": {
+      "source": "google-labs-code/stitch-skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/google-labs-code/stitch-skills.git",
+      "skillPath": "skills/design-md/SKILL.md",
+      "skillFolderHash": "9fb00b1eb365c8222c0dcc62b8dda2dedef49985559f5efe07414df5243f572c",
+      "installedAt": "2026-01-24T13:29:00.000Z",
+      "updatedAt": "2026-01-24T13:29:00.000Z"
+    },
+    "react-components": {
+      "source": "google-labs-code/stitch-skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/google-labs-code/stitch-skills.git",
+      "skillPath": "skills/react-components/SKILL.md",
+      "skillFolderHash": "6967d5247423df7162fbc465ab1ec152cfc1f7833e37184791fbfc0fb5f6c2a8",
+      "installedAt": "2026-01-24T13:29:00.000Z",
+      "updatedAt": "2026-01-24T13:29:00.000Z"
+    },
+    "stitch-loop": {
+      "source": "google-labs-code/stitch-skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/google-labs-code/stitch-skills.git",
+      "skillPath": "skills/stitch-loop/SKILL.md",
+      "skillFolderHash": "4f4af7ae7c60030b5f03428593dd88590d2bc3289c933a31d61c41cd49bbfd34",
+      "installedAt": "2026-01-24T13:29:00.000Z",
+      "updatedAt": "2026-01-24T13:29:00.000Z"
     }
   }
 }
