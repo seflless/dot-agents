@@ -1,0 +1,17 @@
+{
+  "name": "dot-agents",
+  "version": "1.0.0",
+  "description": "CLI to auto-sync ~/.agents to GitHub on file changes",
+  "bin": {
+    "dot-agents": "./bin/dot-agents.js"
+  },
+  "scripts": {
+    "start": "node bin/dot-agents.js start",
+    "stop": "node bin/dot-agents.js stop",
+    "status": "node bin/dot-agents.js status"
+  },
+  "dependencies": {
+    "commander": "^12.0.0",
+    "chokidar": "^3.6.0"
+  }
+}
