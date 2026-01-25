@@ -1,0 +1,25 @@
+skills/ask-repo/scripts/clone_repo.sh
+  a334a8db59abc77b 2,7-8,13
+skills/ask-repo/SKILL.md
+  a334a8db59abc77b 14,17,46-56
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.0.37",
+  "base_commit_sha": "5f91c243faf35a56a715ead2f288e6b557ff993a",
+  "prompts": {
+    "a334a8db59abc77b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0b46fd05-9a97-4fa3-a049-f77b4816aa27",
+        "model": "claude-opus-4-5-20251101"
+      },
+      "human_author": "Francois Laberge <francoislaberge@gmail.com>",
+      "messages": [],
+      "total_additions": 17,
+      "total_deletions": 6,
+      "accepted_lines": 17,
+      "overriden_lines": 0
+    }
+  }
+}
