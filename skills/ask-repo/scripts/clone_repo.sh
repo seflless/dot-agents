@@ -1,16 +1,16 @@
 #!/bin/bash
-# Clone a GitHub repo to /tmp/ask-repo/ for analysis
+# Clone a GitHub repo to ~/.ask-repo/ for analysis
 # Usage: clone_repo.sh <github-url>
 
 set -e
 
-CACHE_DIR="/tmp/ask-repo"
-MAX_AGE_HOURS=24
+CACHE_DIR="$HOME/.ask-repo"
+MAX_AGE_DAYS=7
 
 # Clean up old clones
 cleanup_old() {
     if [ -d "$CACHE_DIR" ]; then
-        find "$CACHE_DIR" -maxdepth 1 -type d -mmin +$((MAX_AGE_HOURS * 60)) -exec rm -rf {} \; 2>/dev/null || true
+        find "$CACHE_DIR" -maxdepth 1 -type d -mtime +$MAX_AGE_DAYS -exec rm -rf {} \; 2>/dev/null || true
     fi
 }
 

@@ -11,10 +11,10 @@ Explore and learn from any GitHub repository without leaving your terminal.
 
 ### 1. Clone
 Run `scripts/clone_repo.sh <github-url>` to shallow-clone the repo:
-- Clones to `/tmp/ask-repo/<owner>-<repo>/`
+- Clones to `~/.ask-repo/<owner>-<repo>/`
 - Uses `--depth 1` for speed (~5-10s for most repos)
 - Handles HTTPS and SSH URLs
-- Cleans up clones older than 24 hours
+- Cleans up clones older than 7 days
 
 ### 2. Orient (30 seconds)
 Read key files in this order to understand the project:
@@ -42,6 +42,17 @@ Combine findings into a concise response:
 - Answer the user's question directly
 - Include `file:line` references for key findings
 - Keep it scannable (bullets, not paragraphs)
+
+### 5. Share Location
+Always tell the user where the repo was cloned:
+```
+Repo cloned to: ~/.ask-repo/<owner>-<repo>
+```
+
+If the user wants to explore further, or seems like they'd benefit from browsing the code themselves, offer to open it in Cursor:
+```bash
+cursor ~/.ask-repo/<owner>-<repo>
+```
 
 ## File Priority by Language
 
