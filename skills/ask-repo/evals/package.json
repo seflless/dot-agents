@@ -1,0 +1,19 @@
+{
+  "name": "ask-repo-evals",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "eval": "node --env-file=.env node_modules/.bin/evalite",
+    "eval:watch": "node --env-file=.env node_modules/.bin/evalite watch"
+  },
+  "dependencies": {
+    "evalite": "^0.2.0",
+    "autoevals": "^0.0.64",
+    "@anthropic-ai/sdk": "^0.39.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0",
+    "@types/node": "^22.0.0",
+    "vitest": "^2.1.0"
+  }
+}

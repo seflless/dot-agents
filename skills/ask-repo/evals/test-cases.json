@@ -1,0 +1,92 @@
+{
+  "discovery": [
+    {
+      "id": "in-dist-1",
+      "category": "in-distribution",
+      "input": "What are good React reconciler alternatives?",
+      "expectedRepos": ["preactjs/preact", "infernojs/inferno", "million/million"],
+      "notes": "Popular topic, Claude likely knows these"
+    },
+    {
+      "id": "in-dist-2",
+      "category": "in-distribution",
+      "input": "Find me a lodash alternative that's more modern",
+      "expectedRepos": ["remeda/remeda", "radashi-org/radashi"],
+      "notes": "Common question, well-documented alternatives"
+    },
+    {
+      "id": "in-dist-3",
+      "category": "in-distribution",
+      "input": "Best Python web frameworks for async",
+      "expectedRepos": ["fastapi/fastapi", "encode/starlette", "litestar-org/litestar"],
+      "notes": "Very popular topic"
+    },
+    {
+      "id": "in-dist-4",
+      "category": "in-distribution",
+      "input": "What's a good alternative to Redux for state management?",
+      "expectedRepos": ["pmndrs/zustand", "pmndrs/jotai", "statelyai/xstate"],
+      "notes": "Heavily discussed in React ecosystem"
+    },
+    {
+      "id": "in-dist-5",
+      "category": "in-distribution",
+      "input": "Find me a CSS-in-JS library that supports SSR",
+      "expectedRepos": ["styled-components/styled-components", "emotion-js/emotion", "stitchesjs/stitches"],
+      "notes": "Well-known options"
+    },
+    {
+      "id": "out-dist-1",
+      "category": "out-of-distribution",
+      "input": "Rust ECS libraries for game development",
+      "expectedRepos": ["bevyengine/bevy", "amethyst/specs", "leudz/shipyard"],
+      "notes": "Niche domain, less likely in training"
+    },
+    {
+      "id": "out-dist-2",
+      "category": "out-of-distribution",
+      "input": "Find me MCP server implementations",
+      "expectedRepos": ["modelcontextprotocol/servers", "anthropics/anthropic-quickstarts"],
+      "notes": "Very recent (2024), unlikely in training data"
+    },
+    {
+      "id": "out-dist-3",
+      "category": "out-of-distribution",
+      "input": "What are good Zig build system alternatives or wrappers?",
+      "expectedRepos": ["ziglang/zig", "mattnite/zig-bootstrap"],
+      "notes": "Niche language ecosystem"
+    },
+    {
+      "id": "out-dist-4",
+      "category": "out-of-distribution",
+      "input": "Find me libraries for CRDT implementation in TypeScript",
+      "expectedRepos": ["yjs/yjs", "automerge/automerge", "loro-dev/loro"],
+      "notes": "Specialized distributed systems topic"
+    },
+    {
+      "id": "out-dist-5",
+      "category": "out-of-distribution",
+      "input": "Good libraries for building TUIs in Go",
+      "expectedRepos": ["charmbracelet/bubbletea", "rivo/tview", "gizak/termui"],
+      "notes": "Niche but growing area"
+    }
+  ],
+  "analysis": [
+    {
+      "id": "analysis-1",
+      "category": "analysis",
+      "input": "How does preact implement the diffing algorithm?",
+      "repo": "preactjs/preact",
+      "expectedFindings": ["diff.js", "children.js", "recursive diffing"],
+      "notes": "Tests deep code analysis"
+    },
+    {
+      "id": "analysis-2",
+      "category": "analysis",
+      "input": "How does zustand handle state updates without re-rendering?",
+      "repo": "pmndrs/zustand",
+      "expectedFindings": ["useSyncExternalStore", "shallow comparison", "selector"],
+      "notes": "Tests understanding of React internals"
+    }
+  ]
+}
