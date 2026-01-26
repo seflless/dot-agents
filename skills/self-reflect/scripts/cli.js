@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 import { createServer } from "http";
-import { readFileSync, existsSync, readdirSync, mkdirSync, writeFileSync, copyFileSync } from "fs";
-import { join, dirname, extname, basename } from "path";
+import { readFileSync, existsSync, readdirSync, mkdirSync, copyFileSync } from "fs";
+import { join, dirname, extname } from "path";
 import { fileURLToPath } from "url";
 import { homedir } from "os";
 import { collectGitHubData } from "./github-collector.js";
@@ -346,9 +346,68 @@ function syncToDataRepo(dataRepoDir) {
         mkdirSync(projectBackupDir, { recursive: true });
         copyFileSync(sessionsIndex, join(projectBackupDir, "sessions-index.json"));
       }
+
+      // Copy all .jsonl session files (actual conversation data)
+      const sessionsBackupDir = join(projectBackupDir, "sessions");
+      try {
+        const projectFiles = readdirSync(projectPath);
+        const jsonlFiles = projectFiles.filter(f => f.endsWith('.jsonl'));
+        if (jsonlFiles.length > 0) {
+          mkdirSync(sessionsBackupDir, { recursive: true });
+          for (const jsonlFile of jsonlFiles) {
+            copyFileSync(join(projectPath, jsonlFile), join(sessionsBackupDir, jsonlFile));
+          }
+        }
+      } catch {
+        // Skip if can't read project directory
+      }
     }
 
     console.log(`  Backed up ${backupCount} CLAUDE.md files from ${projects.length} projects`);
+
+    // Count total session files backed up
+    let sessionFileCount = 0;
+    for (const project of projects) {
+      const sessionsDir = join(dataRepoProjects, project, "sessions");
+      if (existsSync(sessionsDir)) {
+        try {
+          sessionFileCount += readdirSync(sessionsDir).filter(f => f.endsWith('.jsonl')).length;
+        } catch {}
+      }
+    }
+    console.log(`  Backed up ${sessionFileCount} Claude session files (.jsonl)`);
+  }
+
+  // Backup Cursor project transcripts
+  const cursorProjectsDir = join(CURSOR_DIR, "projects");
+  const dataRepoCursor = join(dataRepoDir, "cursor-projects");
+  if (existsSync(cursorProjectsDir)) {
+    mkdirSync(dataRepoCursor, { recursive: true });
+    const cursorProjects = readdirSync(cursorProjectsDir);
+    let cursorSessionCount = 0;
+
+    for (const project of cursorProjects) {
+      const transcriptsDir = join(cursorProjectsDir, project, "agent-transcripts");
+      if (existsSync(transcriptsDir)) {
+        try {
+          const transcriptFiles = readdirSync(transcriptsDir).filter(f => f.endsWith('.txt'));
+          if (transcriptFiles.length > 0) {
+            const backupDir = join(dataRepoCursor, project, "agent-transcripts");
+            mkdirSync(backupDir, { recursive: true });
+            for (const file of transcriptFiles) {
+              copyFileSync(join(transcriptsDir, file), join(backupDir, file));
+              cursorSessionCount++;
+            }
+          }
+        } catch {
+          // Skip if can't read
+        }
+      }
+    }
+
+    if (cursorSessionCount > 0) {
+      console.log(`  Backed up ${cursorSessionCount} Cursor session files (.txt)`);
+    }
   }
 
   // Also backup global CLAUDE.md
