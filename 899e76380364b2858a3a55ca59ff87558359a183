@@ -1,0 +1,25 @@
+skills/self-reflect/scripts/cli.js
+  071fda0ed29090ce 349-363,367-410
+skills/self-reflect/SKILL.md
+  071fda0ed29090ce 47-48,139-146,148-149
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.0.37",
+  "base_commit_sha": "899e76380364b2858a3a55ca59ff87558359a183",
+  "prompts": {
+    "071fda0ed29090ce": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0bba5c5e-c6bb-4d96-b54d-44cd0f15fdcc",
+        "model": "claude-opus-4-5-20251101"
+      },
+      "human_author": "Francois Laberge <francoislaberge@gmail.com>",
+      "messages": [],
+      "total_additions": 78,
+      "total_deletions": 11,
+      "accepted_lines": 71,
+      "overriden_lines": 0
+    }
+  }
+}
