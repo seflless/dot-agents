@@ -1,0 +1,18 @@
+{
+  "name": "self-reflect",
+  "version": "1.0.0",
+  "type": "module",
+  "bin": {
+    "self-reflect": "./scripts/cli.js"
+  },
+  "scripts": {
+    "sync": "node scripts/cli.js sync",
+    "serve": "node scripts/cli.js serve",
+    "collect": "node scripts/cli.js collect github",
+    "collect:agents": "node scripts/cli.js collect agents"
+  },
+  "dependencies": {
+    "marked": "^17.0.1",
+    "shiki": "^3.21.0"
+  }
+}
