@@ -1,0 +1,38 @@
+skills/self-reflect/SKILL.md
+  79ab5101c5c45e5c 38,43-47,109,124-143
+skills/self-reflect/scripts/cli.js
+  79ab5101c5c45e5c 4-5,16-17,176-185,195,202,210,217,281-285,293-363,378-380,382,384-385,387-388,392-401,404,411-412,423,426-427
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.0.37",
+  "base_commit_sha": "84546ccd9903d519fe0d7dcb00a033b5e310b5c0",
+  "prompts": {
+    "0754ccc9b3ffb3a6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "093169e8-5ce1-4ab6-9fe4-7a330e6f2112",
+        "model": "claude-opus-4-5-20251101"
+      },
+      "human_author": "Francois Laberge <francoislaberge@gmail.com>",
+      "messages": [],
+      "total_additions": 378,
+      "total_deletions": 3,
+      "accepted_lines": 0,
+      "overriden_lines": 0
+    },
+    "79ab5101c5c45e5c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f1e241fc-6552-4684-b149-cc3755a91a2f",
+        "model": "claude-opus-4-5-20251101"
+      },
+      "human_author": "Francois Laberge <francoislaberge@gmail.com>",
+      "messages": [],
+      "total_additions": 2950,
+      "total_deletions": 783,
+      "accepted_lines": 145,
+      "overriden_lines": 0
+    }
+  }
+}
