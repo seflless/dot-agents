@@ -1,0 +1,1720 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Self Reflect</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script type="module">
+      import { codeToHtml } from 'https://esm.sh/shiki@3.21.0';
+      window.shikiHighlight = async (code, lang) => {
+        try {
+          return await codeToHtml(code, { lang: lang || 'text', theme: 'github-dark' });
+        } catch {
+          return `<pre><code>${code.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>`;
+        }
+      };
+      window.shikiReady = true;
+      window.dispatchEvent(new Event('shiki-ready'));
+    </script>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html,
+      body {
+        height: 100%;
+        overflow: hidden;
+      }
+      body {
+        font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+        font-size: 11px;
+        background: #0d1117;
+        color: #c9d1d9;
+        padding: 8px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* Header */
+      .hdr {
+        display: flex;
+        gap: 8px;
+        align-items: baseline;
+        margin-bottom: 8px;
+        flex-wrap: wrap;
+      }
+      .hdr h1 {
+        font-size: 12px;
+        font-weight: 600;
+      }
+      .hdr .meta {
+        color: #6e7681;
+        font-size: 10px;
+      }
+      .time-btns {
+        display: flex;
+        gap: 2px;
+        margin-left: auto;
+      }
+      .time-btns button {
+        background: #21262d;
+        border: 1px solid #30363d;
+        color: #6e7681;
+        padding: 2px 5px;
+        border-radius: 2px;
+        cursor: pointer;
+        font-size: 9px;
+        font-family: inherit;
+      }
+      .time-btns button:hover {
+        background: #30363d;
+      }
+      .time-btns button.active {
+        background: #238636;
+        border-color: #238636;
+        color: #fff;
+      }
+
+      /* Stats row */
+      .stats {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 8px;
+        flex-wrap: wrap;
+      }
+      .st {
+        display: flex;
+        gap: 3px;
+        align-items: baseline;
+      }
+      .st b {
+        font-size: 14px;
+        color: #58a6ff;
+      }
+      .st span {
+        color: #6e7681;
+        font-size: 9px;
+      }
+
+      /* Charts row */
+      .charts-row {
+        display: flex;
+        gap: 6px;
+        margin-bottom: 8px;
+        flex-wrap: wrap;
+      }
+      .chart-panel {
+        background: #161b22;
+        border: 1px solid #21262d;
+        border-radius: 3px;
+        padding: 6px;
+        flex: 1;
+        min-width: 200px;
+      }
+      .chart-panel .title {
+        font-size: 9px;
+        font-weight: 600;
+        color: #6e7681;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 4px;
+      }
+      .chart-wrap {
+        height: 80px;
+      }
+
+      /* Columns row */
+      .columns-row {
+        display: flex;
+        gap: 6px;
+        flex: 1;
+        min-height: 0;
+        overflow: hidden;
+      }
+      .column {
+        background: #161b22;
+        border: 1px solid #21262d;
+        border-radius: 3px;
+        padding: 6px;
+        flex: 1;
+        min-width: 180px;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+        overflow: hidden;
+      }
+      .column .col-hd {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 4px;
+        flex-shrink: 0;
+      }
+      .column .col-title {
+        font-size: 9px;
+        font-weight: 600;
+        color: #6e7681;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      .column .col-body {
+        flex: 1;
+        overflow-y: auto;
+        overflow-x: hidden;
+        min-height: 0;
+      }
+      .column .col-body::-webkit-scrollbar {
+        width: 6px;
+      }
+      .column .col-body::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .column .col-body::-webkit-scrollbar-thumb {
+        background: #30363d;
+        border-radius: 3px;
+      }
+      .column .col-body::-webkit-scrollbar-thumb:hover {
+        background: #484f58;
+      }
+
+      /* Pills/buttons */
+      .pills {
+        display: flex;
+        gap: 3px;
+      }
+      .pill {
+        background: #21262d;
+        border: 1px solid #30363d;
+        color: #6e7681;
+        padding: 1px 4px;
+        border-radius: 2px;
+        cursor: pointer;
+        font-size: 9px;
+        font-family: inherit;
+      }
+      .pill:hover {
+        background: #30363d;
+      }
+      .pill.active {
+        background: #238636;
+        border-color: #238636;
+        color: #fff;
+      }
+
+      /* Tables */
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th,
+      td {
+        text-align: left;
+        padding: 3px 4px;
+      }
+      th {
+        color: #484f58;
+        font-weight: 500;
+        font-size: 9px;
+        border-bottom: 1px solid #21262d;
+        position: sticky;
+        top: 0;
+        background: #161b22;
+      }
+      td {
+        border-bottom: 1px solid #1c2128;
+      }
+      tr:hover td {
+        background: #1c2128;
+      }
+      .repo {
+        color: #58a6ff;
+      }
+      .n {
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+        color: #8b949e;
+      }
+      .bar-c {
+        width: 60px;
+      }
+      .bar {
+        background: #21262d;
+        height: 3px;
+        border-radius: 1px;
+      }
+      .bar i {
+        background: #238636;
+        height: 100%;
+        display: block;
+        border-radius: 1px;
+      }
+      .date {
+        color: #6e7681;
+        font-size: 9px;
+      }
+      .empty {
+        color: #484f58;
+        padding: 20px;
+        text-align: center;
+      }
+      .error {
+        color: #f85149;
+      }
+      .tag {
+        font-size: 8px;
+        padding: 1px 4px;
+        border-radius: 2px;
+        margin-left: 4px;
+        background: transparent;
+        border: 1px solid;
+      }
+      .tag-conductor {
+        border-color: rgba(35, 134, 54, 0.5);
+        color: rgba(35, 134, 54, 0.7);
+      }
+      .tag-cli {
+        border-color: rgba(110, 118, 129, 0.4);
+        color: rgba(139, 148, 158, 0.6);
+      }
+      .tag-cursor {
+        border-color: rgba(163, 113, 247, 0.5);
+        color: rgba(163, 113, 247, 0.7);
+      }
+      .tag-worktree {
+        border-color: rgba(240, 136, 62, 0.5);
+        color: rgba(240, 136, 62, 0.7);
+      }
+      .app {
+        color: #8b949e;
+        font-size: 9px;
+      }
+      .session-desc {
+        color: #c9d1d9;
+        font-size: 10px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-bottom: 2px;
+      }
+      .session-meta {
+        display: flex;
+        gap: 4px;
+        align-items: center;
+        font-size: 9px;
+        color: #6e7681;
+      }
+      .session-meta .repo {
+        color: #58a6ff;
+        font-size: 9px;
+      }
+      .branch {
+        color: #7ee787;
+        font-size: 8px;
+        opacity: 0.7;
+      }
+      .branch::before {
+        content: '⎇ ';
+        opacity: 0.5;
+      }
+      a.repo {
+        text-decoration: none;
+      }
+      a.repo:hover {
+        text-decoration: underline;
+      }
+      tr.clickable {
+        cursor: pointer;
+      }
+      tr.clickable:hover td {
+        background: #21262d;
+      }
+      tr.fork td {
+        opacity: 0.5;
+      }
+      tr.fork:hover td {
+        opacity: 0.7;
+      }
+
+      /* Modal */
+      .modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.8);
+        z-index: 100;
+        padding: 20px;
+        overflow: auto;
+      }
+      .modal.open {
+        display: flex;
+        justify-content: center;
+      }
+      .modal-content {
+        background: #161b22;
+        border: 1px solid #30363d;
+        border-radius: 6px;
+        max-width: 1000px;
+        width: 100%;
+        max-height: 90vh;
+        display: flex;
+        flex-direction: column;
+      }
+      .modal-sessions {
+        width: 200px;
+        border-left: 1px solid #21262d;
+        display: flex;
+        flex-direction: column;
+        flex-shrink: 0;
+        overflow: hidden;
+      }
+      .modal-sessions-hd {
+        padding: 8px 10px;
+        font-size: 9px;
+        font-weight: 600;
+        color: #6e7681;
+        text-transform: uppercase;
+        border-bottom: 1px solid #21262d;
+        flex-shrink: 0;
+      }
+      .modal-sessions-list {
+        flex: 1;
+        overflow-y: auto;
+        padding: 4px;
+      }
+      .modal-sessions-list::-webkit-scrollbar {
+        width: 6px;
+      }
+      .modal-sessions-list::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .modal-sessions-list::-webkit-scrollbar-thumb {
+        background: #30363d;
+        border-radius: 3px;
+      }
+      .session-item {
+        padding: 6px 8px;
+        margin-bottom: 2px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 9px;
+        color: #8b949e;
+        border-left: 2px solid transparent;
+        overflow: hidden;
+      }
+      .session-item:hover {
+        background: #21262d;
+        color: #c9d1d9;
+      }
+      .session-item.active {
+        background: #238636;
+        border-left-color: #238636;
+        color: #fff;
+      }
+      .session-item-desc {
+        color: #c9d1d9;
+        font-size: 9px;
+        margin-bottom: 1px;
+        line-height: 1.3;
+        max-height: 2.6em;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        word-break: break-word;
+      }
+      .session-item.active .session-item-desc {
+        color: #fff;
+      }
+      .session-item-meta {
+        display: flex;
+        gap: 4px;
+        align-items: center;
+        font-size: 8px;
+        color: #6e7681;
+        white-space: nowrap;
+        overflow: hidden;
+      }
+      .session-item-repo {
+        color: #58a6ff;
+        opacity: 0.8;
+      }
+      .session-item.active .session-item-repo {
+        color: rgba(255,255,255,0.8);
+      }
+      .session-item-branch {
+        color: #7ee787;
+        opacity: 0.6;
+      }
+      .session-item.active .session-item-branch {
+        color: rgba(255,255,255,0.7);
+      }
+      .modal-hd {
+        display: flex;
+        align-items: center;
+        padding: 12px;
+        border-bottom: 1px solid #21262d;
+        flex-shrink: 0;
+        gap: 12px;
+      }
+      .modal-hd h2 {
+        font-size: 12px;
+        font-weight: 600;
+      }
+      .modal-hd .nav-hint {
+        color: #6e7681;
+        font-size: 9px;
+        margin-left: auto;
+      }
+      .modal-hd .nav-hint kbd {
+        background: #21262d;
+        border: 1px solid #30363d;
+        border-radius: 2px;
+        padding: 1px 4px;
+        font-family: inherit;
+      }
+      .modal-close {
+        background: none;
+        border: none;
+        color: #6e7681;
+        cursor: pointer;
+        font-size: 18px;
+      }
+      .modal-close:hover {
+        color: #c9d1d9;
+      }
+      .modal-main {
+        flex: 1;
+        display: flex;
+        min-height: 0;
+        position: relative;
+      }
+      /* Tick mark navigation overlay */
+      .nav-ticks {
+        position: absolute;
+        top: 12px;
+        right: 212px;
+        width: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        z-index: 10;
+        pointer-events: none;
+      }
+      .nav-tick {
+        height: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        pointer-events: auto;
+        position: relative;
+      }
+      .nav-tick::after {
+        content: '';
+        width: 12px;
+        height: 2px;
+        background: #484f58;
+        border-radius: 1px;
+        transition: all 0.1s ease;
+      }
+      .nav-tick:hover::after {
+        width: 16px;
+        height: 3px;
+        background: #1f6feb;
+      }
+      .nav-tick.active::after {
+        width: 16px;
+        height: 3px;
+        background: #58a6ff;
+      }
+      .nav-tick-tooltip {
+        position: absolute;
+        right: 24px;
+        background: #21262d;
+        border: 1px solid #30363d;
+        border-radius: 4px;
+        padding: 4px 8px;
+        font-size: 9px;
+        color: #c9d1d9;
+        white-space: nowrap;
+        max-width: 200px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.15s;
+      }
+      .nav-tick:hover .nav-tick-tooltip {
+        opacity: 1;
+      }
+      .modal-body {
+        flex: 1;
+        overflow-y: auto;
+        padding: 12px 24px;
+      }
+      .modal-body::-webkit-scrollbar {
+        width: 6px;
+      }
+      .modal-body::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .modal-body::-webkit-scrollbar-thumb {
+        background: #30363d;
+        border-radius: 3px;
+      }
+      .modal-body::-webkit-scrollbar-thumb:hover {
+        background: #484f58;
+      }
+
+      /* Conversation */
+      .msg {
+        margin-bottom: 12px;
+        padding: 8px 10px;
+        border-radius: 8px;
+        max-width: 90%;
+      }
+      .msg-user {
+        background: #1f6feb;
+        color: #fff;
+        margin-left: auto;
+        border-bottom-right-radius: 2px;
+      }
+      .msg-user .msg-role {
+        color: rgba(255, 255, 255, 0.7);
+      }
+      .msg-assistant {
+        background: #21262d;
+        border-bottom-left-radius: 2px;
+      }
+      .msg-system {
+        background: #1c2128;
+        border-left: 3px solid #6e7681;
+        font-size: 10px;
+        color: #6e7681;
+        max-width: 100%;
+      }
+      .msg-tool {
+        background: #161b22;
+        border: 1px solid #30363d;
+        border-radius: 4px;
+        max-width: 100%;
+      }
+      .msg-role {
+        font-size: 9px;
+        font-weight: 600;
+        text-transform: uppercase;
+        color: #6e7681;
+        margin-bottom: 4px;
+      }
+      .msg-content {
+        white-space: pre-wrap;
+        word-break: break-word;
+        font-size: 11px;
+        line-height: 1.5;
+      }
+      .msg-content code {
+        background: rgba(0, 0, 0, 0.3);
+        padding: 1px 4px;
+        border-radius: 3px;
+        font-size: 10px;
+      }
+      .msg-content pre {
+        background: #0d1117;
+        border-radius: 4px;
+        padding: 8px;
+        margin: 8px 0;
+        overflow-x: auto;
+      }
+      .msg-content pre::-webkit-scrollbar {
+        height: 6px;
+      }
+      .msg-content pre::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .msg-content pre::-webkit-scrollbar-thumb {
+        background: #30363d;
+        border-radius: 3px;
+      }
+      .msg-content pre::-webkit-scrollbar-thumb:hover {
+        background: #484f58;
+      }
+      .msg-content pre code {
+        background: none;
+        padding: 0;
+        font-size: 11px;
+        line-height: 1.4;
+      }
+      .msg-content p {
+        margin: 0 0 8px 0;
+      }
+      .msg-content p:last-child {
+        margin-bottom: 0;
+      }
+      .msg-content ul, .msg-content ol {
+        margin: 8px 0;
+        padding-left: 20px;
+      }
+      .msg-content li {
+        margin: 4px 0;
+      }
+      .msg-content strong {
+        font-weight: 600;
+      }
+      .msg-content a {
+        color: #58a6ff;
+      }
+      /* Shiki code block styling */
+      .msg-content .shiki {
+        background: #0d1117 !important;
+        border-radius: 4px;
+        padding: 8px;
+        margin: 8px 0;
+        overflow-x: auto;
+      }
+      .msg-content .shiki::-webkit-scrollbar {
+        height: 6px;
+      }
+      .msg-content .shiki::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .msg-content .shiki::-webkit-scrollbar-thumb {
+        background: #30363d;
+        border-radius: 3px;
+      }
+      .msg-content .shiki::-webkit-scrollbar-thumb:hover {
+        background: #484f58;
+      }
+
+      /* Tool calls */
+      .tool-call {
+        background: #161b22;
+        border: 1px solid #30363d;
+        border-radius: 4px;
+        margin: 12px 0 4px 0;
+        max-width: 90%;
+      }
+      .tool-call + .tool-call {
+        margin-top: 4px;
+      }
+      .tool-header {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 8px;
+        cursor: pointer;
+        font-size: 10px;
+      }
+      .tool-header:hover {
+        background: #21262d;
+      }
+      .tool-toggle {
+        color: #6e7681;
+        font-size: 8px;
+        width: 12px;
+        transition: transform 0.15s;
+      }
+      .tool-call.expanded .tool-toggle {
+        transform: rotate(90deg);
+      }
+      .tool-name {
+        font-weight: 600;
+        color: #f0883e;
+      }
+      .tool-summary {
+        color: #8b949e;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        flex: 1;
+      }
+      .tool-summary-file {
+        color: #58a6ff;
+      }
+      .tool-details {
+        display: none;
+        padding: 6px 8px;
+        border-top: 1px solid #30363d;
+      }
+      .tool-call.expanded .tool-details {
+        display: block;
+      }
+      .tool-input {
+        font-size: 10px;
+        color: #8b949e;
+        margin-bottom: 4px;
+      }
+      .tool-input-key {
+        color: #7ee787;
+      }
+      .tool-result {
+        background: #0d1117;
+        border-radius: 3px;
+        padding: 6px;
+        font-size: 10px;
+        color: #8b949e;
+        max-height: 200px;
+        overflow: auto;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+      .tool-result::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      .tool-result::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .tool-result::-webkit-scrollbar-thumb {
+        background: #30363d;
+        border-radius: 3px;
+      }
+      .tool-result::-webkit-scrollbar-thumb:hover {
+        background: #484f58;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="hdr">
+      <h1>Self Reflect</h1>
+      <span class="meta" id="period">...</span>
+      <div class="time-btns" id="time-btns">
+        <button data-t="24h">24h</button>
+        <button data-t="7d">7d</button>
+        <button data-t="30d">30d</button>
+        <button data-t="1y" class="active">1y</button>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="st"><b id="total">-</b><span>contrib</span></div>
+      <div class="st"><b id="commits">-</b><span>commits</span></div>
+      <div class="st"><b id="prs">-</b><span>PRs</span></div>
+      <div class="st"><b id="issues">-</b><span>issues</span></div>
+      <div class="st"><b id="repos">-</b><span>repos</span></div>
+      <div class="st"><b id="sessions">-</b><span>sessions</span></div>
+    </div>
+
+    <div class="charts-row">
+      <div class="chart-panel">
+        <div class="title">Contributions</div>
+        <div class="chart-wrap"><canvas id="contrib-chart"></canvas></div>
+      </div>
+      <div class="chart-panel">
+        <div class="title">Repos Created</div>
+        <div class="chart-wrap"><canvas id="repos-chart"></canvas></div>
+      </div>
+      <div class="chart-panel">
+        <div class="title">Agent Sessions</div>
+        <div class="chart-wrap"><canvas id="sessions-chart"></canvas></div>
+      </div>
+    </div>
+
+    <div class="columns-row">
+      <div class="column">
+        <div class="col-hd">
+          <span class="col-title">Repos by Commits</span>
+          <div class="pills" id="filters">
+            <span class="pill active" data-f="all">All</span>
+            <span class="pill" data-f="seflless">me</span>
+            <span class="pill" data-f="decodetool">dt</span>
+          </div>
+        </div>
+        <div class="col-body">
+          <table id="tbl">
+            <thead>
+              <tr>
+                <th>Repo</th>
+                <th class="n">#</th>
+                <th class="bar-c"></th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="column">
+        <div class="col-hd">
+          <span class="col-title"
+            >Repos Created (<span id="created-count">0</span>)</span
+          >
+        </div>
+        <div class="col-body">
+          <table id="created-tbl">
+            <thead>
+              <tr>
+                <th>Repo</th>
+                <th class="n">Date</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="column">
+        <div class="col-hd">
+          <span class="col-title">Top Apps</span>
+        </div>
+        <div class="col-body">
+          <table id="apps-tbl">
+            <thead>
+              <tr>
+                <th>App</th>
+                <th class="n">#</th>
+                <th class="bar-c"></th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="column">
+        <div class="col-hd">
+          <span class="col-title"
+            >Sessions (<span id="sessions-count">0</span>)</span
+          >
+          <div class="pills" id="orch-filters"></div>
+        </div>
+        <div class="col-body" id="sessions-list">
+          <div class="empty">
+            No session data yet.<br />Run: node scripts/cli.js collect agents
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Session viewer modal -->
+    <div class="modal" id="session-modal">
+      <div class="modal-content">
+        <div class="modal-hd">
+          <h2 id="modal-title">Session</h2>
+          <span class="nav-hint"><kbd>j</kbd>/<kbd>k</kbd> messages · <kbd>[</kbd>/<kbd>]</kbd> sessions</span>
+          <button class="modal-close" onclick="closeModal()">&times;</button>
+        </div>
+        <div class="modal-main">
+          <div class="nav-ticks" id="nav-ticks"></div>
+          <div class="modal-body" id="modal-body">
+            Loading...
+          </div>
+          <div class="modal-sessions">
+            <div class="modal-sessions-hd">Sessions</div>
+            <div class="modal-sessions-list" id="modal-sessions-list"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let data, agentData, contribChart, reposChart, sessionsChart;
+      let timeRange = "1y",
+        filter = "all",
+        createdFilter = null,
+        orchFilter = "all";
+
+      // URL param handling
+      function readParams() {
+        const p = new URLSearchParams(location.search);
+        if (p.has("t")) timeRange = p.get("t");
+        if (p.has("f")) filter = p.get("f");
+        if (p.has("cf")) createdFilter = p.get("cf");
+        if (p.has("o")) orchFilter = p.get("o");
+      }
+
+      function updateURL() {
+        const p = new URLSearchParams();
+        if (timeRange !== "1y") p.set("t", timeRange);
+        if (filter !== "all") p.set("f", filter);
+        if (createdFilter) p.set("cf", createdFilter);
+        if (orchFilter !== "all") p.set("o", orchFilter);
+        const qs = p.toString();
+        history.replaceState(null, "", qs ? "?" + qs : location.pathname);
+      }
+
+      function syncUI() {
+        document
+          .querySelectorAll("#time-btns button")
+          .forEach((b) =>
+            b.classList.toggle("active", b.dataset.t === timeRange),
+          );
+        document
+          .querySelectorAll("#filters .pill")
+          .forEach((p) => p.classList.toggle("active", p.dataset.f === filter));
+        document
+          .querySelectorAll("#orch-filters .pill")
+          .forEach((p) =>
+            p.classList.toggle("active", p.dataset.o === orchFilter),
+          );
+      }
+
+      async function load() {
+        readParams();
+        syncUI();
+        try {
+          const [ghRes, agentRes] = await Promise.all([
+            fetch("/api/github"),
+            fetch("/api/agents").catch(() => ({ ok: false })),
+          ]);
+          if (ghRes.ok) {
+            data = await ghRes.json();
+          }
+          if (agentRes.ok) {
+            agentData = await agentRes.json();
+          }
+          render();
+        } catch (e) {
+          document.getElementById("period").innerHTML =
+            `<span class="error">${e.message}</span>`;
+        }
+      }
+
+      function getTimeCutoff() {
+        const now = new Date();
+        if (timeRange === "24h") return new Date(now - 24 * 60 * 60 * 1000);
+        if (timeRange === "7d") return new Date(now - 7 * 24 * 60 * 60 * 1000);
+        if (timeRange === "30d")
+          return new Date(now - 30 * 24 * 60 * 60 * 1000);
+        return new Date(now - 365 * 24 * 60 * 60 * 1000);
+      }
+
+      function render() {
+        if (data) {
+          const c = data.contributions;
+          const fmt = (d) =>
+            new Date(d).toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
+            });
+          document.getElementById("period").textContent =
+            `${data.user.login} · ${fmt(data.period.from)} – ${fmt(data.period.to)}`;
+          document.getElementById("total").textContent =
+            c.contributionCalendar.totalContributions.toLocaleString();
+          document.getElementById("commits").textContent =
+            c.totalCommitContributions;
+          document.getElementById("prs").textContent =
+            c.totalPullRequestContributions;
+          document.getElementById("issues").textContent =
+            c.totalIssueContributions;
+          document.getElementById("repos").textContent =
+            data.reposCreated.filter((r) => !r.isFork).length;
+          renderContrib();
+          renderReposChart();
+          renderTable();
+          renderCreated();
+        }
+        if (agentData) {
+          document.getElementById("sessions").textContent =
+            agentData.sessions?.length || 0;
+          renderOrchFilters();
+          renderSessionsChart();
+          renderSessions();
+          renderTopApps();
+        }
+      }
+
+      function getChartGranularity() {
+        if (timeRange === "24h") return "day";
+        if (timeRange === "7d") return "day";
+        if (timeRange === "30d") return "week";
+        return "month";
+      }
+
+      function agg(weeks, g, cutoff) {
+        const days = weeks
+          .flatMap((w) => w.contributionDays)
+          .filter((d) => new Date(d.date) >= cutoff);
+        if (g === "day")
+          return days.map((d) => ({ d: d.date, c: d.contributionCount }));
+        if (g === "week") {
+          const byWeek = {};
+          days.forEach((d) => {
+            const dt = new Date(d.date);
+            const weekStart = new Date(dt);
+            weekStart.setDate(dt.getDate() - dt.getDay());
+            const k = weekStart.toISOString().slice(0, 10);
+            byWeek[k] = (byWeek[k] || 0) + d.contributionCount;
+          });
+          return Object.entries(byWeek)
+            .sort((a, b) => a[0].localeCompare(b[0]))
+            .map(([d, c]) => ({ d, c }));
+        }
+        const m = {};
+        days.forEach((d) => {
+          const k = d.date.slice(0, 7);
+          m[k] = (m[k] || 0) + d.contributionCount;
+        });
+        return Object.entries(m)
+          .sort((a, b) => a[0].localeCompare(b[0]))
+          .map(([d, c]) => ({ d, c }));
+      }
+
+      const chartOpts = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: {
+            grid: { display: false },
+            ticks: {
+              color: "#484f58",
+              font: { size: 8 },
+              maxTicksLimit: 5,
+              maxRotation: 0,
+            },
+          },
+          y: {
+            grid: { color: "#21262d", drawBorder: false },
+            ticks: { color: "#484f58", font: { size: 8 } },
+            beginAtZero: true,
+          },
+        },
+      };
+
+      function renderContrib() {
+        const cutoff = getTimeCutoff();
+        const g = getChartGranularity();
+        const a = agg(data.contributions.contributionCalendar.weeks, g, cutoff);
+        if (contribChart) contribChart.destroy();
+        contribChart = new Chart(document.getElementById("contrib-chart"), {
+          type: "bar",
+          data: {
+            labels: a.map((x) => x.d),
+            datasets: [
+              {
+                data: a.map((x) => x.c),
+                backgroundColor: "#238636",
+                borderRadius: 1,
+                barPercentage: 0.7,
+              },
+            ],
+          },
+          options: chartOpts,
+        });
+      }
+
+      function renderReposChart() {
+        const cutoff = getTimeCutoff();
+        const filtered = data.reposCreated.filter(
+          (r) => new Date(r.createdAt) >= cutoff,
+        );
+        const m = {};
+        filtered.forEach((r) => {
+          const k = r.createdAt.slice(0, 7);
+          m[k] = (m[k] || 0) + 1;
+        });
+        const months = Object.keys(m).sort();
+        if (reposChart) reposChart.destroy();
+        reposChart = new Chart(document.getElementById("repos-chart"), {
+          type: "bar",
+          data: {
+            labels: months,
+            datasets: [
+              {
+                data: months.map((k) => m[k]),
+                backgroundColor: months.map((k) =>
+                  k === createdFilter ? "#f0883e" : "#58a6ff",
+                ),
+                borderRadius: 1,
+                barPercentage: 0.7,
+              },
+            ],
+          },
+          options: {
+            ...chartOpts,
+            onClick: (e, elements) => {
+              if (elements.length > 0) {
+                const clicked = months[elements[0].index];
+                createdFilter = createdFilter === clicked ? null : clicked;
+                updateURL();
+                renderReposChart();
+                renderCreated();
+              }
+            },
+          },
+        });
+      }
+
+      function renderSessionsChart() {
+        if (!agentData?.sessions?.length) {
+          if (sessionsChart) sessionsChart.destroy();
+          return;
+        }
+        const cutoff = getTimeCutoff();
+        const sessions = agentData.sessions.filter(
+          (s) => new Date(s.date) >= cutoff,
+        );
+        const m = {};
+        sessions.forEach((s) => {
+          const k = s.date.slice(0, 10);
+          m[k] = (m[k] || 0) + 1;
+        });
+        const days = Object.keys(m).sort();
+        if (sessionsChart) sessionsChart.destroy();
+        sessionsChart = new Chart(document.getElementById("sessions-chart"), {
+          type: "bar",
+          data: {
+            labels: days,
+            datasets: [
+              {
+                data: days.map((k) => m[k]),
+                backgroundColor: "#a371f7",
+                borderRadius: 1,
+                barPercentage: 0.7,
+              },
+            ],
+          },
+          options: chartOpts,
+        });
+      }
+
+      function renderTable() {
+        let repos = data.contributions.commitContributionsByRepository
+          .map((r) => ({
+            n: r.repository.nameWithOwner,
+            o: r.repository.owner.login,
+            c: r.contributions.totalCount,
+            fork: r.repository.isFork,
+          }))
+          .sort((a, b) => {
+            // Sort forks to bottom, then by commit count
+            if (a.fork !== b.fork) return a.fork ? 1 : -1;
+            return b.c - a.c;
+          });
+        if (filter !== "all") repos = repos.filter((r) => r.o === filter);
+        const max = Math.max(...repos.map((r) => r.c), 1);
+        document.querySelector("#tbl tbody").innerHTML =
+          repos
+            .map(
+              (r) =>
+                `<tr class="${r.fork ? "fork" : ""}"><td><a class="repo" href="https://github.com/${r.n}" target="_blank">${r.n}</a></td><td class="n">${r.c}</td><td class="bar-c"><div class="bar"><i style="width:${(r.c / max) * 100}%"></i></div></td></tr>`,
+            )
+            .join("") || '<tr><td colspan="3" class="empty">No repos</td></tr>';
+      }
+
+      function renderCreated() {
+        const cutoff = getTimeCutoff();
+        let repos = data.reposCreated
+          .filter((r) => new Date(r.createdAt) >= cutoff)
+          .sort((a, b) => {
+            // Sort forks to bottom, then by date
+            if (a.isFork !== b.isFork) return a.isFork ? 1 : -1;
+            return new Date(b.createdAt) - new Date(a.createdAt);
+          });
+        if (createdFilter)
+          repos = repos.filter(
+            (r) => r.createdAt.slice(0, 7) === createdFilter,
+          );
+        const nonForks = repos.filter((r) => !r.isFork).length;
+        const forkCount = repos.length - nonForks;
+        const countText =
+          forkCount > 0 ? `${nonForks} (+${forkCount} forks)` : `${nonForks}`;
+        document.getElementById("created-count").textContent =
+          countText +
+          (createdFilter ? ` in ${createdFilter}` : ` in ${timeRange}`);
+        const fmt = (d) =>
+          new Date(d).toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+          });
+        document.querySelector("#created-tbl tbody").innerHTML =
+          repos
+            .map(
+              (r) =>
+                `<tr class="${r.isFork ? "fork" : ""}"><td><a class="repo" href="https://github.com/${r.nameWithOwner}" target="_blank">${r.nameWithOwner}</a></td><td class="n date">${fmt(r.createdAt)}</td></tr>`,
+            )
+            .join("") || '<tr><td colspan="2" class="empty">No repos</td></tr>';
+      }
+
+      function renderOrchFilters() {
+        if (!agentData?.stats?.byOrchestrator) return;
+        const orchs = agentData.stats.byOrchestrator;
+        const pills = ["all", ...orchs.map((o) => o.name)];
+        document.getElementById("orch-filters").innerHTML = pills
+          .map(
+            (o) =>
+              `<span class="pill${o === orchFilter ? " active" : ""}" data-o="${o}">${o === "all" ? "All" : o}</span>`,
+          )
+          .join("");
+      }
+
+      function renderTopApps() {
+        if (!agentData?.stats?.byApp?.length) {
+          document.querySelector("#apps-tbl tbody").innerHTML =
+            '<tr><td colspan="3" class="empty">No data</td></tr>';
+          return;
+        }
+        const apps = agentData.stats.byApp.slice(0, 20);
+        const max = apps[0]?.count || 1;
+        document.querySelector("#apps-tbl tbody").innerHTML = apps
+          .map(
+            (a) =>
+              `<tr><td class="repo">${a.name}</td><td class="n">${a.count}</td><td class="bar-c"><div class="bar"><i style="width:${(a.count / max) * 100}%;background:#a371f7"></i></div></td></tr>`,
+          )
+          .join("");
+      }
+
+      // Extract repo folder name from project path
+      function getRepoName(projectPath) {
+        if (!projectPath) return '';
+        const parts = projectPath.split('/').filter(Boolean);
+        // Look for last meaningful dir (skip common non-repo dirs)
+        const skip = ['Users', 'home', 'dev', 'code', 'projects', 'repos', 'workspaces', '.agents'];
+        for (let i = parts.length - 1; i >= 0; i--) {
+          if (!skip.includes(parts[i]) && !parts[i].startsWith('.')) {
+            return parts[i];
+          }
+        }
+        return parts[parts.length - 1] || '';
+      }
+
+      function renderSessions() {
+        if (!agentData?.sessions?.length) return;
+        const cutoff = getTimeCutoff();
+        let sessions = agentData.sessions
+          .filter((s) => new Date(s.date) >= cutoff)
+          .sort((a, b) => new Date(b.date) - new Date(a.date));
+        if (orchFilter !== "all")
+          sessions = sessions.filter((s) => s.orchestrator === orchFilter);
+        document.getElementById("sessions-count").textContent =
+          sessions.length +
+          (orchFilter !== "all" ? ` ${orchFilter}` : ` in ${timeRange}`);
+        const fmt = (d) =>
+          new Date(d).toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+            hour: "numeric",
+            minute: "2-digit",
+          });
+        const orchTag = (o) => {
+          const cls =
+            o === "conductor"
+              ? "tag-conductor"
+              : o === "cursor"
+                ? "tag-cursor"
+                : o === "claude-worktree"
+                  ? "tag-worktree"
+                  : "tag-cli";
+          return `<span class="tag ${cls}">${o}</span>`;
+        };
+        document.getElementById("sessions-list").innerHTML = sessions.length
+          ? `
+        <table><thead><tr><th>Session</th><th class="n">Date</th></tr></thead><tbody>
+        ${sessions.map((s) => {
+          const desc = (s.name || s.id).slice(0, 60);
+          const repo = getRepoName(s.project);
+          const branchInfo = s.branch ? `<span class="branch">${s.branch}</span>` : '';
+          return `<tr class="clickable" data-id="${s.id}" data-source="${s.source}"><td><div class="session-desc">${escapeHtml(desc)}</div><div class="session-meta">${repo ? `<span class="repo">${repo}</span>` : ''}${branchInfo}${orchTag(s.orchestrator || "cli")}</div></td><td class="n date">${fmt(s.date)}</td></tr>`;
+        }).join("")}
+        </tbody></table>
+      `
+          : '<div class="empty">No sessions in this period</div>';
+      }
+
+      // Modal functions
+      let currentNavIndex = -1;
+      let userMessageEls = [];
+      let modalSessions = [];
+      let currentSessionIdx = -1;
+
+      function openModal(sessionId, source) {
+        const modal = document.getElementById("session-modal");
+        const body = document.getElementById("modal-body");
+        const title = document.getElementById("modal-title");
+        const modalSessionsList = document.getElementById("modal-sessions-list");
+
+        // Get filtered sessions for the modal
+        const cutoff = getTimeCutoff();
+        modalSessions = agentData.sessions
+          .filter((s) => new Date(s.date) >= cutoff)
+          .sort((a, b) => new Date(b.date) - new Date(a.date));
+        if (orchFilter !== "all")
+          modalSessions = modalSessions.filter((s) => s.orchestrator === orchFilter);
+
+        currentSessionIdx = modalSessions.findIndex((s) => s.id === sessionId);
+
+        // Render sessions list in modal
+        modalSessionsList.innerHTML = modalSessions.map((s, i) => {
+          const desc = (s.name || s.id).slice(0, 40);
+          const repo = getRepoName(s.project);
+          return `<div class="session-item${s.id === sessionId ? ' active' : ''}" data-id="${s.id}" data-source="${s.source}"><div class="session-item-desc">${escapeHtml(desc)}</div><div class="session-item-meta">${repo ? `<span class="session-item-repo">${repo}</span>` : ''}${s.branch ? `<span class="session-item-branch">${s.branch}</span>` : ''}</div></div>`;
+        }).join('');
+
+        // Click handler for session items
+        modalSessionsList.onclick = (e) => {
+          const item = e.target.closest('.session-item');
+          if (item) loadSession(item.dataset.id, item.dataset.source);
+        };
+
+        modal.classList.add("open");
+        document.body.style.overflow = "hidden";
+
+        // Load the initial session
+        loadSession(sessionId, source);
+      }
+
+      function loadSession(sessionId, source) {
+        const body = document.getElementById("modal-body");
+        const title = document.getElementById("modal-title");
+        const modalSessionsList = document.getElementById("modal-sessions-list");
+
+        // Update active session in list
+        modalSessionsList.querySelectorAll('.session-item').forEach(el => {
+          el.classList.toggle('active', el.dataset.id === sessionId);
+        });
+        currentSessionIdx = modalSessions.findIndex((s) => s.id === sessionId);
+
+        // Scroll active session into view
+        const activeSession = modalSessionsList.querySelector('.session-item.active');
+        if (activeSession) activeSession.scrollIntoView({ block: 'nearest' });
+
+        const session = agentData.sessions.find((s) => s.id === sessionId);
+        title.textContent = session?.name || sessionId;
+        body.innerHTML = '<div class="empty">Loading conversation...</div>';
+        document.getElementById('nav-ticks').innerHTML = '';
+        currentNavIndex = -1;
+        userMessageEls = [];
+
+        fetch(`/api/session/${encodeURIComponent(sessionId)}?source=${source}`)
+          .then((r) => (r.ok ? r.json() : Promise.reject("Not found")))
+          .then(async (data) => {
+            if (!data.messages?.length) {
+              body.innerHTML = '<div class="empty">No messages found</div>';
+              return;
+            }
+
+            // Render messages with markdown
+            const rendered = [];
+            const userMessages = [];
+            let msgIdx = 0;
+            for (const m of data.messages) {
+              if (m.role === "tool") {
+                rendered.push(renderToolCall(m));
+              } else {
+                const role = m.role || "unknown";
+                const cls =
+                  role === "user"
+                    ? "msg-user"
+                    : role === "assistant"
+                      ? "msg-assistant"
+                      : "msg-system";
+                const content =
+                  typeof m.content === "string"
+                    ? m.content
+                    : JSON.stringify(m.content, null, 2);
+
+                // Use markdown for assistant messages
+                const htmlContent = role === "assistant"
+                  ? await renderMarkdown(content)
+                  : escapeHtml(content);
+
+                const msgId = role === "user" ? `user-msg-${userMessages.length}` : '';
+                if (role === "user") {
+                  userMessages.push({ idx: userMessages.length, content: content.slice(0, 60) });
+                }
+
+                rendered.push(`<div class="msg ${cls}" ${msgId ? `id="${msgId}"` : ''}><div class="msg-role">${role}</div><div class="msg-content">${htmlContent}</div></div>`);
+              }
+              msgIdx++;
+            }
+
+            // Update content
+            body.innerHTML = rendered.join("");
+
+            // Update tick marks (separate from scrolling content)
+            const navTicks = document.getElementById('nav-ticks');
+            navTicks.innerHTML = userMessages.map((m, i) =>
+              `<div class="nav-tick" data-idx="${i}"><span class="nav-tick-tooltip">${escapeHtml(m.content)}</span></div>`
+            ).join('');
+
+            // Store refs to user message elements
+            userMessageEls = userMessages.map((_, i) => document.getElementById(`user-msg-${i}`));
+
+            // Click handler for tick marks
+            navTicks.onclick = (e) => {
+              const tick = e.target.closest('.nav-tick');
+              if (tick) navigateToMessage(parseInt(tick.dataset.idx));
+            };
+
+            // Setup scroll observer to track current message
+            setupScrollObserver();
+
+            // Navigate to first message by default
+            if (userMessages.length > 0) {
+              navigateToMessage(0);
+            }
+          })
+          .catch((err) => {
+            body.innerHTML = `<div class="empty">Could not load conversation<br><span class="error">${err}</span></div>`;
+            document.getElementById('nav-ticks').innerHTML = '';
+          });
+      }
+
+      function navigateToMessage(idx) {
+        if (idx < 0 || idx >= userMessageEls.length) return;
+        currentNavIndex = idx;
+
+        // Scroll to message
+        const el = userMessageEls[idx];
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // Update nav highlight
+        updateNavHighlight();
+      }
+
+      function updateNavHighlight() {
+        document.querySelectorAll('.nav-tick').forEach((item, i) => {
+          item.classList.toggle('active', i === currentNavIndex);
+        });
+      }
+
+      function setupScrollObserver() {
+        const body = document.getElementById('modal-body');
+        let scrollTimeout;
+
+        body.onscroll = () => {
+          clearTimeout(scrollTimeout);
+          scrollTimeout = setTimeout(() => {
+            // Find which user message is most visible
+            const bodyRect = body.getBoundingClientRect();
+            const bodyTop = bodyRect.top;
+
+            let closestIdx = -1;
+            let closestDist = Infinity;
+
+            userMessageEls.forEach((el, i) => {
+              if (!el) return;
+              const rect = el.getBoundingClientRect();
+              const dist = Math.abs(rect.top - bodyTop - 50); // 50px offset from top
+              if (dist < closestDist) {
+                closestDist = dist;
+                closestIdx = i;
+              }
+            });
+
+            if (closestIdx !== -1 && closestIdx !== currentNavIndex) {
+              currentNavIndex = closestIdx;
+              updateNavHighlight();
+            }
+          }, 100);
+        };
+      }
+
+      function closeModal() {
+        document.getElementById("session-modal").classList.remove("open");
+        document.body.style.overflow = "";
+        currentNavIndex = -1;
+        userMessageEls = [];
+      }
+
+      function escapeHtml(str) {
+        return str
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+      }
+
+      // Markdown renderer with syntax highlighting
+      async function renderMarkdown(text) {
+        if (!text) return '';
+
+        // Configure marked
+        const renderer = new marked.Renderer();
+
+        // Store code blocks for async highlighting
+        const codeBlocks = [];
+        renderer.code = function(code, lang) {
+          const id = `code-${codeBlocks.length}`;
+          codeBlocks.push({ id, code: code.text || code, lang: code.lang || lang || 'text' });
+          return `<div id="${id}" class="code-placeholder"></div>`;
+        };
+
+        marked.setOptions({ renderer, breaks: true, gfm: true });
+        let html = marked.parse(text);
+
+        // Highlight code blocks with shiki
+        if (window.shikiHighlight && codeBlocks.length > 0) {
+          for (const block of codeBlocks) {
+            const highlighted = await window.shikiHighlight(block.code, block.lang);
+            html = html.replace(`<div id="${block.id}" class="code-placeholder"></div>`, highlighted);
+          }
+        }
+
+        return html;
+      }
+
+      // Extract just filename from path
+      function getFileName(path) {
+        if (!path) return '';
+        return path.split('/').pop();
+      }
+
+      // Clean Read tool output - strip line number prefixes like "1→", "  10→"
+      function cleanReadOutput(str) {
+        if (!str) return '';
+        return str.replace(/^\s*\d+→/gm, '');
+      }
+
+      function renderToolCall(m) {
+        const toolName = m.tool || "Unknown";
+        let summary = "";
+        let inputHtml = "";
+        let resultHtml = "";
+
+        // Build summary for collapsed view (just filename or key info)
+        if (m.input) {
+          if (toolName === "Bash" && m.input.command) {
+            const cmd = m.input.command.slice(0, 60);
+            summary = `<span class="tool-summary">$ ${escapeHtml(cmd)}${m.input.command.length > 60 ? '...' : ''}</span>`;
+            inputHtml = `<div class="tool-input"><span class="tool-input-key">$</span> ${escapeHtml(m.input.command)}</div>`;
+          } else if (toolName === "Read" && m.input.file_path) {
+            summary = `<span class="tool-summary"><span class="tool-summary-file">${escapeHtml(getFileName(m.input.file_path))}</span></span>`;
+            inputHtml = `<div class="tool-input"><span class="tool-input-key">file:</span> ${escapeHtml(m.input.file_path)}</div>`;
+          } else if (toolName === "Edit" && m.input.file_path) {
+            summary = `<span class="tool-summary"><span class="tool-summary-file">${escapeHtml(getFileName(m.input.file_path))}</span></span>`;
+            inputHtml = `<div class="tool-input"><span class="tool-input-key">edit:</span> ${escapeHtml(m.input.file_path)}</div>`;
+          } else if (toolName === "Write" && m.input.file_path) {
+            summary = `<span class="tool-summary"><span class="tool-summary-file">${escapeHtml(getFileName(m.input.file_path))}</span></span>`;
+            inputHtml = `<div class="tool-input"><span class="tool-input-key">write:</span> ${escapeHtml(m.input.file_path)}</div>`;
+          } else if (toolName === "Glob" && m.input.pattern) {
+            summary = `<span class="tool-summary">${escapeHtml(m.input.pattern)}</span>`;
+            inputHtml = `<div class="tool-input"><span class="tool-input-key">glob:</span> ${escapeHtml(m.input.pattern)}</div>`;
+          } else if (toolName === "Grep" && m.input.pattern) {
+            summary = `<span class="tool-summary">${escapeHtml(m.input.pattern.slice(0, 40))}</span>`;
+            inputHtml = `<div class="tool-input"><span class="tool-input-key">grep:</span> ${escapeHtml(m.input.pattern)}</div>`;
+          } else if (toolName === "Task" && m.input.description) {
+            summary = `<span class="tool-summary">${escapeHtml(m.input.description.slice(0, 40))}</span>`;
+            inputHtml = `<div class="tool-input"><span class="tool-input-key">task:</span> ${escapeHtml(m.input.description)}</div>`;
+          } else {
+            // Generic: show first key value
+            const keys = Object.keys(m.input).slice(0, 1);
+            if (keys.length > 0) {
+              const v = m.input[keys[0]];
+              const vStr = typeof v === "string" ? v.slice(0, 40) : JSON.stringify(v).slice(0, 40);
+              summary = `<span class="tool-summary">${escapeHtml(vStr)}</span>`;
+            }
+            const allKeys = Object.keys(m.input).slice(0, 3);
+            const preview = allKeys
+              .map((k) => {
+                const v = m.input[k];
+                const vStr =
+                  typeof v === "string"
+                    ? v.slice(0, 50)
+                    : JSON.stringify(v).slice(0, 50);
+                return `<span class="tool-input-key">${k}:</span> ${escapeHtml(vStr)}`;
+              })
+              .join(", ");
+            inputHtml = `<div class="tool-input">${preview}</div>`;
+          }
+        }
+
+        // Render result (truncated, clean line numbers for Read)
+        if (m.result !== undefined) {
+          let resultStr =
+            typeof m.result === "string"
+              ? m.result
+              : JSON.stringify(m.result, null, 2);
+
+          // Clean Read output line numbers
+          if (toolName === "Read") {
+            resultStr = cleanReadOutput(resultStr);
+          }
+
+          const truncated =
+            resultStr.length > 1000
+              ? resultStr.slice(0, 1000) + "..."
+              : resultStr;
+          const errorClass = m.isError ? ' style="color:#f85149"' : "";
+          resultHtml = `<div class="tool-result"${errorClass}>${escapeHtml(truncated)}</div>`;
+        }
+
+        return `<div class="tool-call" onclick="this.classList.toggle('expanded')">
+        <div class="tool-header">
+          <span class="tool-toggle">▶</span>
+          <span class="tool-name">${escapeHtml(toolName)}</span>
+          ${summary}
+        </div>
+        <div class="tool-details">
+          ${inputHtml}
+          ${resultHtml}
+        </div>
+      </div>`;
+      }
+
+      // Close modal on escape or background click
+      document.getElementById("session-modal").onclick = (e) => {
+        if (e.target.classList.contains("modal")) closeModal();
+      };
+      document.addEventListener("keydown", (e) => {
+        const modal = document.getElementById("session-modal");
+        if (!modal.classList.contains("open")) return;
+
+        if (e.key === "Escape") {
+          closeModal();
+          return;
+        }
+
+        // Navigation shortcuts: j/k or arrow keys
+        if ((e.key === "j" || e.key === "ArrowDown") && userMessageEls.length > 0) {
+          e.preventDefault();
+          navigateToMessage(Math.min(currentNavIndex + 1, userMessageEls.length - 1));
+        } else if ((e.key === "k" || e.key === "ArrowUp") && userMessageEls.length > 0) {
+          e.preventDefault();
+          navigateToMessage(Math.max(currentNavIndex - 1, 0));
+        }
+
+        // Session navigation: [ and ]
+        if (e.key === "[" && modalSessions.length > 0 && currentSessionIdx > 0) {
+          e.preventDefault();
+          const prev = modalSessions[currentSessionIdx - 1];
+          loadSession(prev.id, prev.source);
+        } else if (e.key === "]" && modalSessions.length > 0 && currentSessionIdx < modalSessions.length - 1) {
+          e.preventDefault();
+          const next = modalSessions[currentSessionIdx + 1];
+          loadSession(next.id, next.source);
+        }
+      });
+
+      document.getElementById("time-btns").onclick = (e) => {
+        if (e.target.dataset.t) {
+          timeRange = e.target.dataset.t;
+          createdFilter = null;
+          updateURL();
+          syncUI();
+          render();
+        }
+      };
+
+      document.getElementById("filters").onclick = (e) => {
+        if (e.target.classList.contains("pill")) {
+          filter = e.target.dataset.f;
+          updateURL();
+          syncUI();
+          renderTable();
+        }
+      };
+
+      document.getElementById("orch-filters").onclick = (e) => {
+        if (e.target.classList.contains("pill")) {
+          orchFilter = e.target.dataset.o;
+          updateURL();
+          syncUI();
+          renderSessions();
+        }
+      };
+
+      document.getElementById("sessions-list").onclick = (e) => {
+        const row = e.target.closest("tr.clickable");
+        if (row) openModal(row.dataset.id, row.dataset.source);
+      };
+
+      load();
+    </script>
+  </body>
+</html>

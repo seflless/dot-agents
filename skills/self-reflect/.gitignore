@@ -1,0 +1,5 @@
+# Collected data (user-specific)
+data/
+
+# Dependencies
+node_modules/
