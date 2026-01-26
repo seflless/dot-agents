@@ -44,6 +44,8 @@ node scripts/cli.js sync
 If the `self-reflect-data` repo is cloned as a sibling directory, sync will also:
 - Copy `agents/sessions.json` and `github/contributions.json` to the data repo
 - Backup all Claude project files (`CLAUDE.md`, `settings.json`, `sessions-index.json`)
+- Backup all Claude session conversation files (`.jsonl`) - the raw chat data
+- Backup all Cursor session transcript files (`.txt`)
 - Backup the global `~/.claude/CLAUDE.md`
 
 ### `collect github`
@@ -134,11 +136,17 @@ When you run `sync`, it will copy data to:
 ├── CLAUDE.md                    # Global ~/.claude/CLAUDE.md backup
 ├── agents/sessions.json         # Session metadata
 ├── github/contributions.json    # GitHub data
-└── claude-projects/             # Per-project backups
+├── claude-projects/             # Claude Code project backups
+│   └── {project-name}/
+│       ├── CLAUDE.md            # Project-specific instructions
+│       ├── settings.json        # Project settings
+│       ├── sessions-index.json  # Session metadata
+│       └── sessions/            # Raw conversation data
+│           └── {sessionId}.jsonl
+└── cursor-projects/             # Cursor project backups
     └── {project-name}/
-        ├── CLAUDE.md            # Project-specific instructions
-        ├── settings.json        # Project settings
-        └── sessions-index.json  # Session metadata
+        └── agent-transcripts/
+            └── {sessionId}.txt
 ```
 
 ## Architecture
