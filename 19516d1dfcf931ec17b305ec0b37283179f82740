@@ -1,0 +1,35 @@
+skills/playground/SKILL.md
+  2a942cd683f2a2d1 1-76
+skills/playground/templates/code-map.md
+  2a942cd683f2a2d1 1-158
+skills/playground/templates/diff-review.md
+  2a942cd683f2a2d1 1-179
+skills/playground/templates/concept-map.md
+  2a942cd683f2a2d1 1-73
+skills/playground/templates/document-critique.md
+  2a942cd683f2a2d1 1-171
+skills/playground/templates/data-explorer.md
+  2a942cd683f2a2d1 1-67
+skills/playground/templates/design-playground.md
+  2a942cd683f2a2d1 1-67
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.0.41",
+  "base_commit_sha": "19516d1dfcf931ec17b305ec0b37283179f82740",
+  "prompts": {
+    "2a942cd683f2a2d1": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4666cbd4-a248-43ca-8521-6d870320ebce",
+        "model": "claude-opus-4-5-20251101"
+      },
+      "human_author": "Francois Laberge <francoislaberge@gmail.com>",
+      "messages": [],
+      "total_additions": 791,
+      "total_deletions": 0,
+      "accepted_lines": 791,
+      "overriden_lines": 0
+    }
+  }
+}
