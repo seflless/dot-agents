@@ -276,7 +276,7 @@
         border-color: rgba(35, 134, 54, 0.5);
         color: rgba(35, 134, 54, 0.7);
       }
-      .tag-cli {
+      .tag-claude-code {
         border-color: rgba(110, 118, 129, 0.4);
         color: rgba(139, 148, 158, 0.6);
       }
@@ -287,6 +287,34 @@
       .tag-worktree {
         border-color: rgba(240, 136, 62, 0.5);
         color: rgba(240, 136, 62, 0.7);
+      }
+      .tag-conductor-terminal {
+        border-color: rgba(35, 134, 54, 0.4);
+        color: rgba(35, 134, 54, 0.55);
+        font-style: italic;
+      }
+
+      /* Search input */
+      .search-wrap {
+        margin-bottom: 4px;
+        flex-shrink: 0;
+      }
+      .search-input {
+        width: 100%;
+        background: #0d1117;
+        border: 1px solid #30363d;
+        border-radius: 3px;
+        color: #c9d1d9;
+        padding: 4px 6px;
+        font-size: 10px;
+        font-family: inherit;
+        outline: none;
+      }
+      .search-input:focus {
+        border-color: #58a6ff;
+      }
+      .search-input::placeholder {
+        color: #484f58;
       }
       .app {
         color: #8b949e;
@@ -881,6 +909,9 @@
           >
           <div class="pills" id="orch-filters"></div>
         </div>
+        <div class="search-wrap">
+          <input type="text" class="search-input" id="session-search" placeholder="Search sessions..." />
+        </div>
         <div class="col-body" id="sessions-list">
           <div class="empty">
             No session data yet.<br />Run: node scripts/cli.js collect agents
@@ -915,7 +946,8 @@
       let timeRange = "1y",
         filter = "all",
         createdFilter = null,
-        orchFilter = "all";
+        orchFilter = "all",
+        sessionSearch = "";
 
       // URL param handling
       function readParams() {
@@ -1056,6 +1088,7 @@
       const chartOpts = {
         responsive: true,
         maintainAspectRatio: false,
+        interaction: { mode: "index", intersect: false },
         plugins: { legend: { display: false } },
         scales: {
           x: {
@@ -1280,9 +1313,21 @@
           .sort((a, b) => new Date(b.date) - new Date(a.date));
         if (orchFilter !== "all")
           sessions = sessions.filter((s) => s.orchestrator === orchFilter);
+        // Search filter
+        if (sessionSearch) {
+          const q = sessionSearch.toLowerCase();
+          sessions = sessions.filter((s) => {
+            const name = (s.name || '').toLowerCase();
+            const branch = (s.branch || '').toLowerCase();
+            const app = (s.app || '').toLowerCase();
+            const project = (s.project || '').toLowerCase();
+            const orch = (s.orchestrator || '').toLowerCase();
+            return name.includes(q) || branch.includes(q) || app.includes(q) || project.includes(q) || orch.includes(q);
+          });
+        }
         document.getElementById("sessions-count").textContent =
           sessions.length +
-          (orchFilter !== "all" ? ` ${orchFilter}` : ` in ${timeRange}`);
+          (sessionSearch ? ` matching "${sessionSearch}"` : orchFilter !== "all" ? ` ${orchFilter}` : ` in ${timeRange}`);
         const fmt = (d) =>
           new Date(d).toLocaleDateString("en-US", {
             month: "short",
@@ -1291,14 +1336,7 @@
             minute: "2-digit",
           });
         const orchTag = (o) => {
-          const cls =
-            o === "conductor"
-              ? "tag-conductor"
-              : o === "cursor"
-                ? "tag-cursor"
-                : o === "claude-worktree"
-                  ? "tag-worktree"
-                  : "tag-cli";
+          const cls = `tag-${o}`;
           return `<span class="tag ${cls}">${o}</span>`;
         };
         document.getElementById("sessions-list").innerHTML = sessions.length
@@ -1713,6 +1751,16 @@
         const row = e.target.closest("tr.clickable");
         if (row) openModal(row.dataset.id, row.dataset.source);
       };
+
+      // Session search with debounce
+      let searchTimeout;
+      document.getElementById("session-search").addEventListener("input", (e) => {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+          sessionSearch = e.target.value.trim();
+          renderSessions();
+        }, 150);
+      });
 
       load();
     </script>

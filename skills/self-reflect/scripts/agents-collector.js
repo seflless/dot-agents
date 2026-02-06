@@ -25,6 +25,13 @@ function readJSON(path) {
   }
 }
 
+// Check if text starts with a system instruction prefix
+function isSystemPrefix(text) {
+  if (!text) return false;
+  const t = text.trimStart();
+  return t.startsWith('<system_instruction>') || t.startsWith('<system-reminder>') || t.startsWith('<system-instruction>') || t.startsWith('<local-command-caveat>');
+}
+
 // Detect orchestrator from project path
 function detectOrchestrator(projectPath) {
   if (!projectPath) return 'unknown';
@@ -44,8 +51,93 @@ function detectOrchestrator(projectPath) {
     return 'okiro';
   }
 
-  // Default: direct CLI usage
-  return 'cli';
+  // Default: Claude Code CLI usage
+  return 'claude-code';
+}
+
+// Peek at a .jsonl file to refine orchestrator detection
+// Returns 'conductor-terminal' if session was started from a Conductor terminal
+function peekOrchestratorFromContent(jsonlPath, currentOrchestrator) {
+  // Only refine if currently detected as 'claude-code' or 'unknown'
+  if (currentOrchestrator !== 'claude-code' && currentOrchestrator !== 'unknown') {
+    return currentOrchestrator;
+  }
+  try {
+    const content = readFileSync(jsonlPath, 'utf-8');
+    // Only check first 4000 chars for performance
+    const head = content.slice(0, 4000);
+    if (head.includes('working inside Conductor') || head.includes('You are working inside Conductor')) {
+      return 'conductor-terminal';
+    }
+  } catch {}
+  return currentOrchestrator;
+}
+
+// Scan a .jsonl file to extract session metadata when no sessions-index.json exists
+function extractSessionFromJsonl(jsonlPath, projectPath) {
+  try {
+    const stat = statSync(jsonlPath);
+    const sessionId = basename(jsonlPath, '.jsonl');
+    const content = readFileSync(jsonlPath, 'utf-8');
+    const lines = content.split('\n').filter(l => l.trim());
+    if (lines.length === 0) return null;
+
+    let firstPrompt = '';
+    let created = null;
+    let gitBranch = null;
+
+    // Parse first lines to extract metadata (scan more to find prompt past system instructions)
+    for (let i = 0; i < Math.min(lines.length, 50); i++) {
+      try {
+        const entry = JSON.parse(lines[i]);
+        // Get timestamp from first entry
+        if (!created && entry.timestamp) {
+          created = entry.timestamp;
+        }
+        // Get first user text prompt (skip system instructions)
+        if (!firstPrompt && entry.type === 'user') {
+          const c = entry.message?.content;
+          let candidate = '';
+          if (typeof c === 'string' && c.trim()) {
+            candidate = c.trim();
+          } else if (Array.isArray(c)) {
+            for (const block of c) {
+              if (block.type === 'text' && block.text?.trim()) {
+                candidate = block.text.trim();
+                break;
+              }
+            }
+          }
+          // Skip system instructions and other injected messages
+          if (candidate && !candidate.startsWith('<system_instruction>') && !candidate.startsWith('<system-reminder>') && !candidate.startsWith('<system-instruction>') && !candidate.startsWith('<local-command-caveat>')) {
+            firstPrompt = candidate;
+          }
+        }
+      } catch {}
+    }
+
+    if (!created) {
+      created = stat.mtime.toISOString();
+    }
+
+    let orchestrator = detectOrchestrator(projectPath);
+    orchestrator = peekOrchestratorFromContent(jsonlPath, orchestrator);
+
+    return {
+      id: sessionId,
+      date: created,
+      modified: stat.mtime.toISOString(),
+      project: projectPath,
+      app: extractAppName(projectPath),
+      orchestrator,
+      name: firstPrompt ? (firstPrompt.slice(0, 80) + (firstPrompt.length > 80 ? '...' : '')) : 'No prompt...',
+      messages: lines.length,
+      branch: gitBranch,
+      source: 'claude-code'
+    };
+  } catch {
+    return null;
+  }
 }
 
 // Extract app name from project path
@@ -97,26 +189,85 @@ function collectClaudeCode() {
   if (existsSync(projectsDir)) {
     const projects = readdirSync(projectsDir);
     for (const project of projects) {
-      const indexPath = join(projectsDir, project, 'sessions-index.json');
+      const projectDir = join(projectsDir, project);
+      const indexPath = join(projectDir, 'sessions-index.json');
+
       if (existsSync(indexPath)) {
+        // Has sessions-index.json - use it, but refine orchestrator from content
         const index = readJSON(indexPath);
         if (index?.entries) {
           const projectPath = index.originalPath || '';
           for (const entry of index.entries) {
+            const fullProjectPath = projectPath || entry.projectPath;
+            let orchestrator = detectOrchestrator(fullProjectPath);
+
+            // Peek at content to refine orchestrator (e.g. conductor-terminal)
+            const jsonlPath = join(projectDir, `${entry.sessionId}.jsonl`);
+            if (existsSync(jsonlPath)) {
+              orchestrator = peekOrchestratorFromContent(jsonlPath, orchestrator);
+            }
+
+            // Get name, skipping system instructions
+            let name = entry.summary || '';
+            if (!name || isSystemPrefix(name)) {
+              const fp = entry.firstPrompt || '';
+              name = isSystemPrefix(fp) ? '' : fp;
+            }
+            // If name is still a system instruction, try to extract from .jsonl
+            if (!name || isSystemPrefix(name)) {
+              if (existsSync(jsonlPath)) {
+                const extracted = extractSessionFromJsonl(jsonlPath, fullProjectPath);
+                if (extracted && extracted.name && extracted.name !== 'No prompt...') {
+                  name = extracted.name;
+                }
+              }
+            }
+            if (!name) name = 'No prompt...';
+            else name = name.slice(0, 80) + (name.length > 80 ? '...' : '');
+
+            // Skip Conductor warmup sessions (small sessions named "Warmup")
+            if (name === 'Warmup' && (entry.messageCount || 0) <= 10) continue;
+
             result.sessions.push({
               id: entry.sessionId,
               date: entry.created,
               modified: entry.modified,
-              project: projectPath || entry.projectPath,
-              app: extractAppName(projectPath || entry.projectPath),
-              orchestrator: detectOrchestrator(projectPath || entry.projectPath),
-              name: entry.summary || (entry.firstPrompt?.slice(0, 80) + '...'),
+              project: fullProjectPath,
+              app: extractAppName(fullProjectPath),
+              orchestrator,
+              name,
               messages: entry.messageCount,
               branch: entry.gitBranch || null,
               source: 'claude-code'
             });
           }
         }
+      } else {
+        // No sessions-index.json - scan .jsonl files directly
+        try {
+          const files = readdirSync(projectDir).filter(f => f.endsWith('.jsonl'));
+          // Reconstruct project path from directory name (best-effort, inherently lossy)
+          // Double dash (--) means /. (dot-prefixed directory), single dash means /
+          const projectPath = '/' + project.replace(/--/g, '/.').replace(/-/g, '/');
+          for (const file of files) {
+            // Skip Conductor warmup sessions (agent-* with tiny files)
+            const sessionId = basename(file, '.jsonl');
+            if (sessionId.startsWith('agent-')) {
+              try {
+                const stat = statSync(join(projectDir, file));
+                // Skip files under 2KB (warmup sessions are tiny)
+                if (stat.size < 2048) continue;
+              } catch { continue; }
+            }
+            const jsonlPath = join(projectDir, file);
+            const session = extractSessionFromJsonl(jsonlPath, projectPath);
+            if (session) {
+              // Skip warmup sessions
+              if (session.name === 'Warmup' && (session.messages || 0) <= 20) continue;
+              result.sessions.push(session);
+            }
+          }
+        } catch {}
       }
     }
   }
@@ -178,9 +329,9 @@ function mergeData(existing, newData) {
       // Update metadata but keep firstSeen
       return {
         ...s,
-        app: s.app || fresh.app,
-        orchestrator: s.orchestrator || fresh.orchestrator,
-        name: fresh.name || s.name, // Prefer fresh name
+        app: fresh.app || s.app,
+        orchestrator: fresh.orchestrator || s.orchestrator,
+        name: (fresh.name && fresh.name !== 'No prompt...') ? fresh.name : (s.name || fresh.name), // Prefer fresh name but not "No prompt..."
         messages: fresh.messages || s.messages
       };
     }
