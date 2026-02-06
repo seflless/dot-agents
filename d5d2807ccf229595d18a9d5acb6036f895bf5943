@@ -1,0 +1,25 @@
+skills/self-reflect/scripts/agents-collector.js
+  ec14ebf6b1d932e0 28-34,54-55,58-140,192-194,196,201-230,235-236,245-270,332-334
+skills/self-reflect/web/index.html
+  ec14ebf6b1d932e0 279,291-318,912-914,949-950,1091,1316-1327,1330,1339,1755-1764
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.0.42",
+  "base_commit_sha": "d5d2807ccf229595d18a9d5acb6036f895bf5943",
+  "prompts": {
+    "ec14ebf6b1d932e0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "57aa2922-a66e-4f6c-8f27-ebe2448d5840",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Francois Laberge <francoislaberge@gmail.com>",
+      "messages": [],
+      "total_additions": 319,
+      "total_deletions": 85,
+      "accepted_lines": 253,
+      "overriden_lines": 0
+    }
+  }
+}
