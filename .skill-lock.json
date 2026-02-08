@@ -144,6 +144,15 @@
       "skillFolderHash": "c2f31172b6f256272305a5e6e7228b258446899f",
       "installedAt": "2026-02-04T22:36:41.758Z",
       "updatedAt": "2026-02-04T22:36:41.758Z"
+    },
+    "shaping": {
+      "source": "rjs/shaping-skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/rjs/shaping-skills.git",
+      "skillPath": "shaping/SKILL.md",
+      "skillFolderHash": "e5fcc1ff456b11fd85ef4176762651ace77083f8",
+      "installedAt": "2026-02-08T00:00:00.000Z",
+      "updatedAt": "2026-02-08T00:00:00.000Z"
     }
   },
   "lastSelectedAgents": [
