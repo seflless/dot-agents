@@ -1,0 +1,27 @@
+skills/agent-sync/SKILL.md
+  bed2c18a9b4bc60d 1-62
+commands/agent-sync.md
+  bed2c18a9b4bc60d 1-15
+skills/agent-sync/scripts/sync.sh
+  bed2c18a9b4bc60d 1-356
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.0.42",
+  "base_commit_sha": "bc776372bb8cc73145f8e6511dd99cb62fa205ab",
+  "prompts": {
+    "bed2c18a9b4bc60d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "92518613-f4c6-4f13-95e7-6c58ae35b301",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Francois Laberge <francoislaberge@gmail.com>",
+      "messages": [],
+      "total_additions": 455,
+      "total_deletions": 22,
+      "accepted_lines": 433,
+      "overriden_lines": 0
+    }
+  }
+}
