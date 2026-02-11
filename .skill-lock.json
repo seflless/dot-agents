@@ -156,9 +156,13 @@
     }
   },
   "lastSelectedAgents": [
-    "claude-code",
+    "amp",
+    "codex",
+    "gemini-cli",
+    "github-copilot",
+    "kimi-cli",
     "opencode",
-    "codex"
+    "claude-code"
   ],
   "dismissed": {
     "findSkillsPrompt": true
