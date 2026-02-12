@@ -1,0 +1,25 @@
+skills/agent-dx/SKILL.md
+  f1314b2b495853b4 24-27,34-35,45-52,100-175,193-198,202,215,254-258,261-265,268-271
+skills/agent-dx/references/tool-matrix.md
+  f1314b2b495853b4 5-26,33
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.2",
+  "base_commit_sha": "c4049111a99c06da852347f918d909b69c89056e",
+  "prompts": {
+    "f1314b2b495853b4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a83e769b-af19-43b8-9246-6859c967e2de",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Francois Laberge <francoislaberge@gmail.com>",
+      "messages": [],
+      "total_additions": 136,
+      "total_deletions": 13,
+      "accepted_lines": 136,
+      "overriden_lines": 0
+    }
+  }
+}
