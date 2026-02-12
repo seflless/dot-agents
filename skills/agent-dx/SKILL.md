@@ -1,6 +1,6 @@
 ---
 name: agent-dx
-description: Audit a repo's tooling for coding agent self-verification. Use when asked to "audit my repo for agent tools", "what testing tools do I need", "set up verification for agents", "agent developer experience", "agent-dx", "how can agents test this", or when onboarding to a new codebase and want to know what verification tools are missing.
+description: Audit a repo's tooling for coding agent self-verification. Use when the user wants to audit agent tooling, mentions "agent-dx", "agent developer experience", "what testing tools do I need", "set up verification for agents", "how can agents test this", or when onboarding to a new codebase and want to know what verification tools are missing.
 ---
 
 # agent-dx — Agent Developer Experience Audit
@@ -71,31 +71,13 @@ If monorepo detected, analyze root config + each workspace independently.
 
 ## Step 2: Scan Existing Tools
 
-Check `devDependencies` in `package.json` and config files for each category:
+Use `references/tool-matrix.md` for the full lookup table of tools per language.
 
-| Category | Look for in devDeps | Look for config files |
-|----------|--------------------|-----------------------|
-| Testing | jest, vitest, mocha, ava, tap | jest.config.*, vitest.config.*, .mocharc.* |
-| Linting | eslint, @biomejs/biome, prettier | .eslintrc*, eslint.config.*, biome.json, .prettierrc* |
-| Type Checking | typescript | tsconfig.json |
-| E2E | @playwright/test, cypress, puppeteer | playwright.config.*, cypress.config.* |
-| Logging | pino, winston, bunyan | (check imports in src/) |
-| Security | (check CI for audit steps) | .github/dependabot.yml, .snyk |
-| Static Analysis | (check CI) | .semgreprc, semgrep.yml |
-| Coverage | c8, nyc, istanbul | .nycrc, .c8rc |
-
-For Python, check `pyproject.toml` `[project.optional-dependencies]` or `[tool.*]` sections:
-
-| Category | Look for | Config sections |
-|----------|---------|-----------------|
-| Testing | pytest | [tool.pytest] |
-| Linting | ruff, flake8, black | [tool.ruff], [tool.black] |
-| Type Checking | mypy, pyright | [tool.mypy], pyrightconfig.json |
-| Logging | structlog | (check imports) |
-
-Also check `package.json` scripts for: `test`, `lint`, `typecheck`, `e2e`, `format`, `check`.
-
-Also scan `.github/workflows/` YAML files for CI steps that run linting, testing, or security scans.
+For each category in the tool matrix:
+1. Check `devDependencies` in `package.json` (JS/TS) or `pyproject.toml` `[tool.*]` sections (Python)
+2. Check for config files (e.g., `vitest.config.*`, `tsconfig.json`, `biome.json`)
+3. Check `package.json` scripts for: `test`, `lint`, `typecheck`, `e2e`, `format`, `check`
+4. **Scan `.github/workflows/*.yml` for CI steps** — if a tool already runs in CI, mark it as "CI-covered" not "Missing". Only recommend tools not already covered by CI.
 
 ## Step 2b: Audit CLAUDE.md Files
 
@@ -119,7 +101,7 @@ Check if it exists. If it does, scan for these sections (doesn't need to match e
 | Directory structure overview | Agent finds files faster |
 | Common gotchas / things to avoid | Agent avoids known pitfalls |
 
-If project CLAUDE.md is missing, recommend creating one. If it exists but is thin, note which topics above are missing.
+If project CLAUDE.md is missing, recommend creating one. If it exists but is **thin** (missing 3+ of the 8 topics above, or any topic covered in fewer than 50 words), note which topics are missing.
 
 **Recommendation template for project CLAUDE.md:**
 ```markdown
@@ -289,7 +271,6 @@ When an existing tool overlaps with what you'd recommend:
 | Python project | Switch entirely to Python tool matrix (pytest, Ruff, Pyright, structlog). |
 | Rust/Go project | Give basic recs (cargo test/clippy or go test/golangci-lint). Note: full support is JS/TS + Python focused. |
 | All tools already installed | Congratulatory report. Check for missing agent-friendly flags (JSON output). Suggest agent cheat sheet. |
-| CI already runs checks | Note which checks CI covers. Only recommend tools not in CI. |
 
 ## Output
 
