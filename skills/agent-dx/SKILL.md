@@ -21,12 +21,18 @@ Read these files to understand the project:
 ```
 package.json                    # JS/TS: deps, devDeps, scripts, workspaces
 tsconfig.json                   # TypeScript config
+bun.lockb / bun.lock            # Bun runtime
+pnpm-lock.yaml                  # pnpm
+yarn.lock                       # Yarn
+package-lock.json               # npm
 pyproject.toml                  # Python: deps, tools
 requirements.txt                # Python: deps
 setup.py / setup.cfg            # Python: legacy
 Cargo.toml                      # Rust
 go.mod                          # Go
 .github/workflows/*.yml         # CI configuration
+CLAUDE.md                       # Project-level agent context
+~/.claude/CLAUDE.md             # Global agent context
 ```
 
 **Determine language:**
@@ -35,6 +41,15 @@ go.mod                          # Go
 - `Cargo.toml` → Rust
 - `go.mod` → Go
 - No manifest → scan file extensions as fallback
+
+**Determine package manager / runtime** (JS/TS only):
+- `bun.lockb` or `bun.lock` exists → already using Bun
+- `pnpm-lock.yaml` exists → already using pnpm
+- `yarn.lock` exists → already using Yarn
+- `package-lock.json` exists → already using npm
+- None of the above → recommend **Bun** (fastest runtime, built-in test runner, native TS)
+
+**Bun recommendation rationale:** Bun is the default recommendation for new JS/TS projects. It's faster than Node for installs, has a built-in test runner (`bun test`), native TypeScript execution (no build step), and a built-in bundler. If the user already uses pnpm/yarn/npm, respect that — don't push migration. Just note Bun as an FYI.
 
 **Determine framework** (from dependencies):
 - `electron` → Electron (dual runtime: Node + Chromium)
@@ -82,6 +97,82 @@ Also check `package.json` scripts for: `test`, `lint`, `typecheck`, `e2e`, `form
 
 Also scan `.github/workflows/` YAML files for CI steps that run linting, testing, or security scans.
 
+## Step 2b: Audit CLAUDE.md Files
+
+Check for agent context files at two levels:
+
+**Project-level:** `CLAUDE.md` in the repo root (or `.claude/CLAUDE.md`)
+**Global-level:** `~/.claude/CLAUDE.md`
+
+### Project CLAUDE.md
+
+Check if it exists. If it does, scan for these sections (doesn't need to match exactly — just check if the topics are covered):
+
+| Topic | Why it matters for agents |
+|-------|--------------------------|
+| Project description / purpose | Agent understands what it's building |
+| Tech stack / key dependencies | Agent picks the right tools and patterns |
+| How to run the project (dev server, build) | Agent can test its changes |
+| How to run tests | Agent knows the test command |
+| How to lint / type check | Agent knows the verification commands |
+| Code conventions / patterns | Agent follows the team's style |
+| Directory structure overview | Agent finds files faster |
+| Common gotchas / things to avoid | Agent avoids known pitfalls |
+
+If project CLAUDE.md is missing, recommend creating one. If it exists but is thin, note which topics above are missing.
+
+**Recommendation template for project CLAUDE.md:**
+```markdown
+# [Project Name]
+
+[One-line description of what this project does]
+
+## Tech Stack
+- Runtime: [Bun / Node / Python / etc.]
+- Framework: [React / Next / Django / etc.]
+- Database: [Postgres / SQLite / etc.]
+
+## Development
+- `bun install` — install dependencies
+- `bun dev` — start dev server
+- `bun test` — run tests
+- `bun run lint` — lint code
+- `bun run typecheck` — type check
+
+## Code Conventions
+- [Key patterns, naming conventions, directory layout rules]
+
+## Things to Avoid
+- [Known pitfalls, deprecated patterns, etc.]
+```
+
+### Global CLAUDE.md
+
+Check if `~/.claude/CLAUDE.md` exists. This gives agents personal context about the developer that applies across all projects.
+
+If missing, recommend creating one with:
+
+```markdown
+# About Me
+- Name: [your name]
+- Role: [what you do — e.g., "Full-stack engineer", "Founder at X"]
+
+## Preferences
+- Preferred runtime: [Bun / Node / etc.]
+- Preferred package manager: [bun / pnpm / npm / etc.]
+- Code style: [terse vs verbose, functional vs OOP, etc.]
+- Communication style: [brief vs detailed responses]
+
+## Current Projects
+- [Project 1]: [one-line context]
+- [Project 2]: [one-line context]
+
+## General Instructions
+- [Anything agents should always do or never do across all your projects]
+```
+
+The global file is especially useful for things like: "I use Bun everywhere", "I prefer terse code", "Always use TypeScript strict mode" — context that agents otherwise have to ask about every session.
+
 ## Step 3: Generate Report
 
 Use the tool-matrix reference (`references/tool-matrix.md`) for recommendations per stack.
@@ -99,9 +190,16 @@ Use the agent-commands reference (`references/agent-commands.md`) for agent-opti
 - **Monorepo:** [Yes (tool) / No]
 - **Package Manager:** [npm / yarn / pnpm / pip / poetry]
 
+## Agent Context Files
+| File | Status | Notes |
+|------|--------|-------|
+| Project CLAUDE.md | [Exists (good/thin) / Missing] | [what topics are covered or missing] |
+| Global ~/.claude/CLAUDE.md | [Exists / Missing] | [recommendations if missing] |
+
 ## Existing Tools
 | Category | Tool | Status |
 |----------|------|--------|
+| Runtime / Package Manager | [Bun / Node+npm / Node+pnpm / etc.] | [Installed] |
 | Unit Testing | [tool or None] | [Installed / Missing] |
 | Linting | [tool or None] | [Installed / Missing] |
 | Type Checking | [tool or None] | [Installed / Missing] |
@@ -114,7 +212,7 @@ Use the agent-commands reference (`references/agent-commands.md`) for agent-opti
 | Visual Regression | [tool or None] | [Installed / Missing / N/A] |
 
 ## Agent Readiness Score
-[X/10 categories covered]
+[X/12 categories covered — includes CLAUDE.md files and runtime]
 
 ## Recommendations
 
@@ -153,21 +251,24 @@ Quick reference of all verification commands for this project:
 
 ### Priority Tiers
 
-**Critical** (agents can't self-verify without these):
-1. Unit/integration testing
-2. Linting
-3. Type checking
+**Critical** (agents can't operate effectively without these):
+1. Project CLAUDE.md — agent needs to know how to run/test/lint the project
+2. Unit/integration testing
+3. Linting
+4. Type checking
 
 **Important** (significantly improves agent effectiveness):
-4. E2E / browser testing (only if frontend/Electron detected)
-5. Structured logging
-6. GitHub CLI for CI checks
+5. Runtime / package manager (recommend Bun for new JS/TS projects)
+6. E2E / browser testing (only if frontend/Electron detected)
+7. Structured logging
+8. GitHub CLI for CI checks
+9. Global ~/.claude/CLAUDE.md — agent context about the developer
 
 **Nice-to-Have** (for thorough verification):
-7. Security scanning
-8. Static analysis (only for larger/security-sensitive codebases)
-9. Test coverage
-10. Visual regression (only if UI components/Storybook detected)
+10. Security scanning
+11. Static analysis (only for larger/security-sensitive codebases)
+12. Test coverage
+13. Visual regression (only if UI components/Storybook detected)
 
 ## Tool Conflict Strategy
 

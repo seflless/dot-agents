@@ -2,13 +2,35 @@
 
 Recommendations per language/framework. For each tool: what to install, why, and what it replaces.
 
+## Runtime / Package Manager (JS/TS)
+
+| Scenario | Recommendation | Install | Why |
+|----------|---------------|---------|-----|
+| No lockfile detected | **Bun** | `curl -fsSL https://bun.sh/install \| bash` | Fastest runtime, built-in TS, built-in test runner, built-in bundler |
+| Has `bun.lockb` / `bun.lock` | Already using Bun | — | Already good |
+| Has `pnpm-lock.yaml` | Keep pnpm | — | Respect existing choice. Pnpm is solid. |
+| Has `yarn.lock` | Keep Yarn | — | Note: Bun is faster for future consideration |
+| Has `package-lock.json` | Keep npm | — | Note: Bun is faster for future consideration |
+
+**Why Bun as default:** Bun is the fastest JS/TS runtime. `bun install` is 10-100x faster than npm. Native TypeScript execution (no build step needed). Built-in test runner (`bun test`) means one less devDependency. Built-in bundler. If the team already uses pnpm/yarn/npm, don't push migration — just note it.
+
+**Bun equivalents:**
+```bash
+bun install          # instead of npm install
+bun test             # instead of npx vitest (built-in, Jest-compatible)
+bun run dev          # instead of npm run dev
+bunx biome check .   # instead of npx biome check .
+```
+
+---
+
 ## JavaScript / TypeScript
 
 ### Unit Testing
 
 | Scenario | Recommendation | Install | Why |
 |----------|---------------|---------|-----|
-| No test framework | **Vitest** | `npm install -D vitest` | 10-20x faster than Jest, native ESM/TS, 97% Jest-compatible |
+| No test framework | **Vitest** | `bun add -D vitest` (or `npm install -D vitest`) | 10-20x faster than Jest, native ESM/TS, 97% Jest-compatible |
 | Has Jest | Keep Jest | — | Note: Vitest is faster for future consideration |
 | Has Vitest | Already good | — | — |
 | Has Mocha | Keep Mocha | — | Suggest Vitest if migrating |
