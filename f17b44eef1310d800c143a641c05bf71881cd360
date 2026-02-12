@@ -1,0 +1,25 @@
+skills/create-cli/SKILL.md
+  47bfdf55b71c9615 1-93
+skills/create-cli/references/cli-guidelines.md
+  47bfdf55b71c9615 1-239
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.1",
+  "base_commit_sha": "f17b44eef1310d800c143a641c05bf71881cd360",
+  "prompts": {
+    "47bfdf55b71c9615": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1c2cefdc-4a68-4f22-9b06-3ba683ed71e6",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Francois Laberge <francoislaberge@gmail.com>",
+      "messages": [],
+      "total_additions": 332,
+      "total_deletions": 0,
+      "accepted_lines": 332,
+      "overriden_lines": 0
+    }
+  }
+}
