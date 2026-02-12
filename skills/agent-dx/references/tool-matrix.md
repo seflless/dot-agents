@@ -1,5 +1,7 @@
 # Tool Recommendation Matrix
 
+> Last Updated: 2026-02-12
+
 Recommendations per language/framework. For each tool: what to install, why, and what it replaces.
 
 ## Runtime / Package Manager (JS/TS)

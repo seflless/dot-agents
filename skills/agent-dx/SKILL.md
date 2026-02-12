@@ -1,5 +1,6 @@
 ---
 name: agent-dx
+version: 1.0.0
 description: Audit a repo's tooling for coding agent self-verification. Use when the user wants to audit agent tooling, mentions "agent-dx", "agent developer experience", "what testing tools do I need", "set up verification for agents", "how can agents test this", or when onboarding to a new codebase and want to know what verification tools are missing.
 ---
 
@@ -47,9 +48,7 @@ CLAUDE.md                       # Project-level agent context
 - `pnpm-lock.yaml` exists → already using pnpm
 - `yarn.lock` exists → already using Yarn
 - `package-lock.json` exists → already using npm
-- None of the above → recommend **Bun** (fastest runtime, built-in test runner, native TS)
-
-**Bun recommendation rationale:** Bun is the default recommendation for new JS/TS projects. It's faster than Node for installs, has a built-in test runner (`bun test`), native TypeScript execution (no build step), and a built-in bundler. If the user already uses pnpm/yarn/npm, respect that — don't push migration. Just note Bun as an FYI.
+- None of the above → recommend **Bun** (see `references/tool-matrix.md` for rationale)
 
 **Determine framework** (from dependencies):
 - `electron` → Electron (dual runtime: Node + Chromium)
@@ -155,6 +154,16 @@ If missing, recommend creating one with:
 
 The global file is especially useful for things like: "I use Bun everywhere", "I prefer terse code", "Always use TypeScript strict mode" — context that agents otherwise have to ask about every session.
 
+## Step 2c: Verify Detection
+
+Spot-check findings before reporting. For each tool marked "Installed", confirm it actually runs:
+- JS/TS: `bunx vitest --version`, `bunx biome --version`, `tsc --version`
+- Python: `pytest --version`, `ruff --version`, `pyright --version`
+- Rust: `cargo clippy --version`
+- Go: `golangci-lint --version`
+
+If a command fails, downgrade that tool's status from "Installed" to "Not found (listed in deps but not runnable)".
+
 ## Step 3: Generate Report
 
 Use the tool-matrix reference (`references/tool-matrix.md`) for recommendations per stack.
@@ -164,6 +173,14 @@ Use the agent-commands reference (`references/agent-commands.md`) for agent-opti
 
 ```markdown
 # agent-dx Report
+
+## Agent Summary
+```yaml
+missing_critical: [list of missing critical-tier tools]
+missing_important: [list of missing important-tier tools]
+existing_tools: {category: tool, ...}
+readiness_score: X/12
+```
 
 ## Project Context
 - **Language:** [detected language]
