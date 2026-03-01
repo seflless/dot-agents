@@ -153,11 +153,22 @@
       "skillFolderHash": "e5fcc1ff456b11fd85ef4176762651ace77083f8",
       "installedAt": "2026-02-08T00:00:00.000Z",
       "updatedAt": "2026-02-08T00:00:00.000Z"
+    },
+    "electron": {
+      "source": "vercel-labs/agent-browser",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/vercel-labs/agent-browser.git",
+      "skillPath": "skills/electron/SKILL.md",
+      "skillFolderHash": "262130632e186c3ee2d153b6d5b5dd6e60b8236f",
+      "installedAt": "2026-03-01T20:33:32.542Z",
+      "updatedAt": "2026-03-01T20:33:32.542Z"
     }
   },
   "lastSelectedAgents": [
     "amp",
+    "cline",
     "codex",
+    "cursor",
     "gemini-cli",
     "github-copilot",
     "kimi-cli",
