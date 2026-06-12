@@ -1,127 +1,152 @@
 ---
 name: impeccable
-description: Create distinctive, production-grade frontend interfaces with high design quality. Use this skill when the user asks to build web components, pages, artifacts, posters, or applications. Generates creative, polished code that avoids generic AI aesthetics.
-license: Apache 2.0. Based on Anthropic's frontend-design skill. See NOTICE.md for attribution.
+description: Use when the user wants to design, redesign, shape, critique, audit, polish, clarify, distill, harden, optimize, adapt, animate, colorize, extract, or otherwise improve a frontend interface. Covers websites, landing pages, dashboards, product UI, app shells, components, forms, settings, onboarding, and empty states. Handles UX review, visual hierarchy, information architecture, cognitive load, accessibility, performance, responsive behavior, theming, anti-patterns, typography, fonts, spacing, layout, alignment, color, motion, micro-interactions, UX copy, error states, edge cases, i18n, and reusable design systems or tokens. Also use for bland designs that need to become bolder or more delightful, loud designs that should become quieter, live browser iteration on UI elements, or ambitious visual effects that should feel technically extraordinary. Not for backend-only or non-UI tasks.
 ---
 
-This skill guides creation of distinctive, production-grade frontend interfaces that avoid generic "AI slop" aesthetics. Implement real working code with exceptional attention to aesthetic details and creative choices.
+Designs and iterates production-grade frontend interfaces. Real working code, committed design choices, exceptional craft.
 
-## Design Direction
+## Setup (non-optional)
 
-Commit to a BOLD aesthetic direction:
-- **Purpose**: What problem does this interface solve? Who uses it?
-- **Tone**: Pick an extreme: brutally minimal, maximalist chaos, retro-futuristic, organic/natural, luxury/refined, playful/toy-like, editorial/magazine, brutalist/raw, art deco/geometric, soft/pastel, industrial/utilitarian, etc. There are so many flavors to choose from. Use these for inspiration but design one that is true to the aesthetic direction.
-- **Constraints**: Technical requirements (framework, performance, accessibility).
-- **Differentiation**: What makes this UNFORGETTABLE? What's the one thing someone will remember?
+Two steps before any design work. Both are required. Skipping either produces generic output that ignores the project.
 
-**CRITICAL**: Choose a clear conceptual direction and execute it with precision. Bold maximalism and refined minimalism both work—the key is intentionality, not intensity.
+### 1. Context gathering
 
-Then implement working code that is:
-- Production-grade and functional
-- Visually striking and memorable
-- Cohesive with a clear aesthetic point-of-view
-- Meticulously refined in every detail
+Two files at the project root, case-insensitive:
 
-## Frontend Aesthetics Guidelines
+- **PRODUCT.md** — required. Users, brand, tone, anti-references, strategic principles.
+- **DESIGN.md** — optional, strongly recommended. Colors, typography, elevation, components.
+
+Load both in one call:
+
+```bash
+node .agents/skills/impeccable/scripts/load-context.mjs
+```
+
+Consume the full JSON output. Never pipe through `head`, `tail`, `grep`, or `jq`.
+
+If the output is already in this session's conversation history, don't re-run. Exceptions requiring a fresh load: you just ran `$impeccable teach` or `$impeccable document` (they rewrite the files), or the user manually edited one.
+
+`$impeccable live` already warms context via `live.mjs` — if you've run `live.mjs`, don't also run `load-context.mjs` this session.
+
+If PRODUCT.md is missing, empty, or placeholder (`[TODO]` markers, <200 chars): run `$impeccable teach`, then resume the user's original task with the fresh context.
+
+If DESIGN.md is missing: nudge once per session (*"Run `$impeccable document` for more on-brand output"*), then proceed.
+
+### 2. Register
+
+Every design task is **brand** (marketing, landing, campaign, long-form content, portfolio — design IS the product) or **product** (app UI, admin, dashboard, tool — design SERVES the product).
+
+Identify before designing. Priority: (1) cue in the task itself ("landing page" vs "dashboard"); (2) the surface in focus (the page, file, or route being worked on); (3) `register` field in PRODUCT.md. First match wins.
+
+If PRODUCT.md lacks the `register` field (legacy), infer it once from its "Users" and "Product Purpose" sections, then cache the inferred value for the session. Suggest the user run `$impeccable teach` to add the field explicitly.
+
+Load the matching reference: [reference/brand.md](reference/brand.md) or [reference/product.md](reference/product.md). The shared design laws below apply to both.
+
+## Shared design laws
+
+Apply to every design, both registers. Match implementation complexity to the aesthetic vision — maximalism needs elaborate code, minimalism needs precision. Interpret creatively. Vary across projects; never converge on the same choices. GPT is capable of extraordinary work — don't hold back.
+
+### Color
+
+- Use OKLCH. Reduce chroma as lightness approaches 0 or 100 — high chroma at extremes looks garish.
+- Never use `#000` or `#fff`. Tint every neutral toward the brand hue (chroma 0.005–0.01 is enough).
+- Pick a **color strategy** before picking colors. Four steps on the commitment axis:
+  - **Restrained** — tinted neutrals + one accent ≤10%. Product default; brand minimalism.
+  - **Committed** — one saturated color carries 30–60% of the surface. Brand default for identity-driven pages.
+  - **Full palette** — 3–4 named roles, each used deliberately. Brand campaigns; product data viz.
+  - **Drenched** — the surface IS the color. Brand heroes, campaign pages.
+- The "one accent ≤10%" rule is Restrained only. Committed / Full palette / Drenched exceed it on purpose. Don't collapse every design to Restrained by reflex.
+
+### Theme
+
+Dark vs. light is never a default. Not dark "because tools look cool dark." Not light "to be safe."
+
+Before choosing, write one sentence of physical scene: who uses this, where, under what ambient light, in what mood. If the sentence doesn't force the answer, it's not concrete enough — add detail until it does.
+
+"Observability dashboard" does not force an answer. "SRE glancing at incident severity on a 27-inch monitor at 2am in a dim room" does. Run the sentence, not the category.
 
 ### Typography
-→ *Consult [typography reference](reference/typography.md) for scales, pairing, and loading strategies.*
 
-Choose fonts that are beautiful, unique, and interesting. Pair a distinctive display font with a refined body font.
+- Cap body line length at 65–75ch.
+- Hierarchy through scale + weight contrast (≥1.25 ratio between steps). Avoid flat scales.
 
-**DO**: Use a modular type scale with fluid sizing (clamp)
-**DO**: Vary font weights and sizes to create clear visual hierarchy
-**DON'T**: Use overused fonts—Inter, Roboto, Arial, Open Sans, system defaults
-**DON'T**: Use monospace typography as lazy shorthand for "technical/developer" vibes
-**DON'T**: Put large icons with rounded corners above every heading—they rarely add value and make sites look templated
+### Layout
 
-### Color & Theme
-→ *Consult [color reference](reference/color-and-contrast.md) for OKLCH, palettes, and dark mode.*
-
-Commit to a cohesive palette. Dominant colors with sharp accents outperform timid, evenly-distributed palettes.
-
-**DO**: Use modern CSS color functions (oklch, color-mix, light-dark) for perceptually uniform, maintainable palettes
-**DO**: Tint your neutrals toward your brand hue—even a subtle hint creates subconscious cohesion
-**DON'T**: Use gray text on colored backgrounds—it looks washed out; use a shade of the background color instead
-**DON'T**: Use pure black (#000) or pure white (#fff)—always tint; pure black/white never appears in nature
-**DON'T**: Use the AI color palette: cyan-on-dark, purple-to-blue gradients, neon accents on dark backgrounds
-**DON'T**: Use gradient text for "impact"—especially on metrics or headings; it's decorative rather than meaningful
-**DON'T**: Default to dark mode with glowing accents—it looks "cool" without requiring actual design decisions
-
-### Layout & Space
-→ *Consult [spatial reference](reference/spatial-design.md) for grids, rhythm, and container queries.*
-
-Create visual rhythm through varied spacing—not the same padding everywhere. Embrace asymmetry and unexpected compositions. Break the grid intentionally for emphasis.
-
-**DO**: Create visual rhythm through varied spacing—tight groupings, generous separations
-**DO**: Use fluid spacing with clamp() that breathes on larger screens
-**DO**: Use asymmetry and unexpected compositions; break the grid intentionally for emphasis
-**DON'T**: Wrap everything in cards—not everything needs a container
-**DON'T**: Nest cards inside cards—visual noise, flatten the hierarchy
-**DON'T**: Use identical card grids—same-sized cards with icon + heading + text, repeated endlessly
-**DON'T**: Use the hero metric layout template—big number, small label, supporting stats, gradient accent
-**DON'T**: Center everything—left-aligned text with asymmetric layouts feels more designed
-**DON'T**: Use the same spacing everywhere—without rhythm, layouts feel monotonous
-
-### Visual Details
-**DO**: Use intentional, purposeful decorative elements that reinforce brand
-**DON'T**: Use glassmorphism everywhere—blur effects, glass cards, glow borders used decoratively rather than purposefully
-**DON'T**: Use rounded elements with thick colored border on one side—a lazy accent that almost never looks intentional
-**DON'T**: Use sparklines as decoration—tiny charts that look sophisticated but convey nothing meaningful
-**DON'T**: Use rounded rectangles with generic drop shadows—safe, forgettable, could be any AI output
-**DON'T**: Use modals unless there's truly no better alternative—modals are lazy
+- Vary spacing for rhythm. Same padding everywhere is monotony.
+- Cards are the lazy answer. Use them only when they're truly the best affordance. Nested cards are always wrong.
+- Don't wrap everything in a container. Most things don't need one.
 
 ### Motion
-→ *Consult [motion reference](reference/motion-design.md) for timing, easing, and reduced motion.*
 
-Focus on high-impact moments: one well-orchestrated page load with staggered reveals creates more delight than scattered micro-interactions.
+- Don't animate CSS layout properties.
+- Ease out with exponential curves (ease-out-quart / quint / expo). No bounce, no elastic.
 
-**DO**: Use motion to convey state changes—entrances, exits, feedback
-**DO**: Use exponential easing (ease-out-quart/quint/expo) for natural deceleration
-**DO**: For height animations, use grid-template-rows transitions instead of animating height directly
-**DON'T**: Animate layout properties (width, height, padding, margin)—use transform and opacity only
-**DON'T**: Use bounce or elastic easing—they feel dated and tacky; real objects decelerate smoothly
+### Absolute bans
 
-### Interaction
-→ *Consult [interaction reference](reference/interaction-design.md) for forms, focus, and loading patterns.*
+Match-and-refuse. If you're about to write any of these, rewrite the element with different structure.
 
-Make interactions feel fast. Use optimistic UI—update immediately, sync later.
+- **Side-stripe borders.** `border-left` or `border-right` greater than 1px as a colored accent on cards, list items, callouts, or alerts. Never intentional. Rewrite with full borders, background tints, leading numbers/icons, or nothing.
+- **Gradient text.** `background-clip: text` combined with a gradient background. Decorative, never meaningful. Use a single solid color. Emphasis via weight or size.
+- **Glassmorphism as default.** Blurs and glass cards used decoratively. Rare and purposeful, or nothing.
+- **The hero-metric template.** Big number, small label, supporting stats, gradient accent. SaaS cliché.
+- **Identical card grids.** Same-sized cards with icon + heading + text, repeated endlessly.
+- **Modal as first thought.** Modals are usually laziness. Exhaust inline / progressive alternatives first.
 
-**DO**: Use progressive disclosure—start simple, reveal sophistication through interaction (basic options first, advanced behind expandable sections; hover states that reveal secondary actions)
-**DO**: Design empty states that teach the interface, not just say "nothing here"
-**DO**: Make every interactive surface feel intentional and responsive
-**DON'T**: Repeat the same information—redundant headers, intros that restate the heading
-**DON'T**: Make every button primary—use ghost buttons, text links, secondary styles; hierarchy matters
+### Copy
 
-### Responsive
-→ *Consult [responsive reference](reference/responsive-design.md) for mobile-first, fluid design, and container queries.*
+- Every word earns its place. No restated headings, no intros that repeat the title.
+- **No em dashes.** Use commas, colons, semicolons, periods, or parentheses. Also not `--`.
 
-**DO**: Use container queries (@container) for component-level responsiveness
-**DO**: Adapt the interface for different contexts—don't just shrink it
-**DON'T**: Hide critical functionality on mobile—adapt the interface, don't amputate it
+### The AI slop test
 
-### UX Writing
-→ *Consult [ux-writing reference](reference/ux-writing.md) for labels, errors, and empty states.*
+If someone could look at this interface and say "AI made that" without doubt, it's failed. Cross-register failures are the absolute bans above. Register-specific failures live in each reference.
 
-**DO**: Make every word earn its place
-**DON'T**: Repeat information users can already see
+**Category-reflex check.** If someone could guess the theme and palette from the category name alone — "observability → dark blue", "healthcare → white + teal", "finance → navy + gold", "crypto → neon on black" — it's the training-data reflex. Rework the scene sentence and color strategy until the answer is no longer obvious from the domain.
 
----
+## Commands
 
-## The AI Slop Test
+| Command | Category | Description | Reference |
+|---|---|---|---|
+| `craft [feature]` | Build | Shape, then build a feature end-to-end | [reference/craft.md](reference/craft.md) |
+| `shape [feature]` | Build | Plan UX/UI before writing code | [reference/shape.md](reference/shape.md) |
+| `teach` | Build | Set up PRODUCT.md and DESIGN.md context | [reference/teach.md](reference/teach.md) |
+| `document` | Build | Generate DESIGN.md from existing project code | [reference/document.md](reference/document.md) |
+| `extract [target]` | Build | Pull reusable tokens and components into design system | [reference/extract.md](reference/extract.md) |
+| `critique [target]` | Evaluate | UX design review with heuristic scoring | [reference/critique.md](reference/critique.md) |
+| `audit [target]` | Evaluate | Technical quality checks (a11y, perf, responsive) | [reference/audit.md](reference/audit.md) |
+| `polish [target]` | Refine | Final quality pass before shipping | [reference/polish.md](reference/polish.md) |
+| `bolder [target]` | Refine | Amplify safe or bland designs | [reference/bolder.md](reference/bolder.md) |
+| `quieter [target]` | Refine | Tone down aggressive or overstimulating designs | [reference/quieter.md](reference/quieter.md) |
+| `distill [target]` | Refine | Strip to essence, remove complexity | [reference/distill.md](reference/distill.md) |
+| `harden [target]` | Refine | Production-ready: errors, i18n, edge cases | [reference/harden.md](reference/harden.md) |
+| `onboard [target]` | Refine | Design first-run flows, empty states, activation | [reference/onboard.md](reference/onboard.md) |
+| `animate [target]` | Enhance | Add purposeful animations and motion | [reference/animate.md](reference/animate.md) |
+| `colorize [target]` | Enhance | Add strategic color to monochromatic UIs | [reference/colorize.md](reference/colorize.md) |
+| `typeset [target]` | Enhance | Improve typography hierarchy and fonts | [reference/typeset.md](reference/typeset.md) |
+| `layout [target]` | Enhance | Fix spacing, rhythm, and visual hierarchy | [reference/layout.md](reference/layout.md) |
+| `delight [target]` | Enhance | Add personality and memorable touches | [reference/delight.md](reference/delight.md) |
+| `overdrive [target]` | Enhance | Push past conventional limits | [reference/overdrive.md](reference/overdrive.md) |
+| `clarify [target]` | Fix | Improve UX copy, labels, and error messages | [reference/clarify.md](reference/clarify.md) |
+| `adapt [target]` | Fix | Adapt for different devices and screen sizes | [reference/adapt.md](reference/adapt.md) |
+| `optimize [target]` | Fix | Diagnose and fix UI performance | [reference/optimize.md](reference/optimize.md) |
+| `live` | Iterate | Visual variant mode: pick elements in the browser, generate alternatives | [reference/live.md](reference/live.md) |
 
-**Critical quality check**: If you showed this interface to someone and said "AI made this," would they believe you immediately? If yes, that's the problem.
+Plus two management commands — `pin <command>` and `unpin <command>`, detailed below.
 
-A distinctive interface should make someone ask "how was this made?" not "which AI made this?"
+### Routing rules
 
-Review the DON'T guidelines above—they are the fingerprints of AI-generated work from 2024-2025.
+1. **No argument** — render the table above as the user-facing command menu, grouped by category. Ask what they'd like to do.
+2. **First word matches a command** — load its reference file and follow its instructions. Everything after the command name is the target.
+3. **First word doesn't match** — general design invocation. Apply the setup steps, shared design laws, and the loaded register reference, using the full argument as context.
 
----
+Setup (context gathering, register) is already loaded by then; sub-commands don't re-invoke `$impeccable`.
 
-## Implementation Principles
+## Pin / Unpin
 
-Match implementation complexity to the aesthetic vision. Maximalist designs need elaborate code with extensive animations and effects. Minimalist or refined designs need restraint, precision, and careful attention to spacing, typography, and subtle details.
+**Pin** creates a standalone shortcut so `$<command>` invokes `$impeccable <command>` directly. **Unpin** removes it. The script writes to every harness directory present in the project.
 
-Interpret creatively and make unexpected choices that feel genuinely designed for the context. No design should be the same. Vary between light and dark themes, different fonts, different aesthetics. NEVER converge on common choices across generations.
+```bash
+node .agents/skills/impeccable/scripts/pin.mjs <pin|unpin> <command>
+```
 
-Remember: {{model}} is capable of extraordinary creative work. Don't hold back—show what can truly be created when thinking outside the box and committing fully to a distinctive vision.
+Valid `<command>` is any command from the table above. Report the script's result concisely — confirm the new shortcut on success, relay stderr verbatim on error.

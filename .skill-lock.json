@@ -42,9 +42,9 @@
       "sourceType": "github",
       "sourceUrl": "https://github.com/vercel-labs/agent-browser.git",
       "skillPath": "skills/agent-browser/SKILL.md",
-      "skillFolderHash": "5f29940c0380af6c22e7078ab0cd54f4baa0fdba",
+      "skillFolderHash": "b6f762bf402cdfaf6a06514e9ce4142ce3e4fb4c",
       "installedAt": "2026-01-24T11:46:56.000Z",
-      "updatedAt": "2026-01-24T11:49:08.819Z"
+      "updatedAt": "2026-04-08T20:10:17.573Z"
     },
     "design-md": {
       "source": "google-labs-code/stitch-skills",
@@ -113,10 +113,10 @@
       "source": "pbakaus/impeccable",
       "sourceType": "github",
       "sourceUrl": "https://github.com/pbakaus/impeccable.git",
-      "skillPath": "source/skills/frontend-design/SKILL.md",
-      "skillFolderHash": "a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a7b8c9d0e1f2",
+      "skillPath": ".agents/skills/impeccable/SKILL.md",
+      "skillFolderHash": "aad754dc6464f6e5eb0e638cf1ff5f4d7f7656b0",
       "installedAt": "2026-01-24T15:30:00.000Z",
-      "updatedAt": "2026-01-24T15:30:00.000Z"
+      "updatedAt": "2026-04-24T13:18:00.415Z"
     },
     "onboarding-cro": {
       "source": "coreyhaines31/marketingskills",
@@ -159,20 +159,151 @@
       "sourceType": "github",
       "sourceUrl": "https://github.com/vercel-labs/agent-browser.git",
       "skillPath": "skills/electron/SKILL.md",
-      "skillFolderHash": "262130632e186c3ee2d153b6d5b5dd6e60b8236f",
+      "skillFolderHash": "79bf2fb6edfcf688931e6f1a444da144b835ccbd",
       "installedAt": "2026-03-01T20:33:32.542Z",
-      "updatedAt": "2026-03-01T20:33:32.542Z"
+      "updatedAt": "2026-04-08T20:12:10.118Z"
+    },
+    "visualise": {
+      "source": "bentossell/visualise",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/bentossell/visualise.git",
+      "skillPath": "SKILL.md",
+      "skillFolderHash": "35cd185b58af5db2f9d0fe13d9872b544a467483",
+      "installedAt": "2026-03-13T14:15:50.619Z",
+      "updatedAt": "2026-03-13T14:15:50.619Z"
+    },
+    "gsap": {
+      "source": "heygen-com/hyperframes",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/heygen-com/hyperframes.git",
+      "skillPath": "skills/gsap/SKILL.md",
+      "skillFolderHash": "d07fa2b09c3361535ee7a1905134366be5a8bd30",
+      "installedAt": "2026-04-21T19:10:03.518Z",
+      "updatedAt": "2026-04-21T19:10:03.518Z"
+    },
+    "hyperframes": {
+      "source": "heygen-com/hyperframes",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/heygen-com/hyperframes.git",
+      "skillPath": "skills/hyperframes/SKILL.md",
+      "skillFolderHash": "b672e1a6e63bb1493d1fd4624e60bf4362520e5c",
+      "installedAt": "2026-04-21T19:10:03.932Z",
+      "updatedAt": "2026-04-21T19:10:03.932Z"
+    },
+    "hyperframes-cli": {
+      "source": "heygen-com/hyperframes",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/heygen-com/hyperframes.git",
+      "skillPath": "skills/hyperframes-cli/SKILL.md",
+      "skillFolderHash": "4d3618044d2a16ac9e24b831622449f43ebb83c5",
+      "installedAt": "2026-04-21T19:10:04.370Z",
+      "updatedAt": "2026-04-21T19:10:04.370Z"
+    },
+    "hyperframes-registry": {
+      "source": "heygen-com/hyperframes",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/heygen-com/hyperframes.git",
+      "skillPath": "skills/hyperframes-registry/SKILL.md",
+      "skillFolderHash": "f9b2f8e7906c2ef745e961cc04d33f9825b7f541",
+      "installedAt": "2026-04-21T19:10:04.780Z",
+      "updatedAt": "2026-04-21T19:10:04.780Z"
+    },
+    "website-to-hyperframes": {
+      "source": "heygen-com/hyperframes",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/heygen-com/hyperframes.git",
+      "skillPath": "skills/website-to-hyperframes/SKILL.md",
+      "skillFolderHash": "619608c27a75cce016844ae42d81f21c7223616d",
+      "installedAt": "2026-04-21T19:10:05.195Z",
+      "updatedAt": "2026-04-21T19:10:05.195Z"
+    },
+    "last30days": {
+      "source": "mvanhorn/last30days-skill",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/mvanhorn/last30days-skill.git",
+      "skillPath": "skills/last30days/SKILL.md",
+      "skillFolderHash": "63ee58e42ad33abd1e5b114f8f28f367681cb8ff",
+      "installedAt": "2026-06-08T15:34:08.497Z",
+      "updatedAt": "2026-06-08T15:34:08.497Z"
+    },
+    "agents-sdk": {
+      "source": "cloudflare/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/cloudflare/skills.git",
+      "skillPath": "skills/agents-sdk/SKILL.md",
+      "skillFolderHash": "fe7c98385541543a62abf65090654fcbc181c8b7",
+      "installedAt": "2026-06-12T14:45:01.789Z",
+      "updatedAt": "2026-06-12T14:45:01.789Z"
+    },
+    "cloudflare": {
+      "source": "cloudflare/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/cloudflare/skills.git",
+      "skillPath": "skills/cloudflare/SKILL.md",
+      "skillFolderHash": "c600bf46393e881ae0780407dd5a4354d35f7b73",
+      "installedAt": "2026-06-12T14:45:01.791Z",
+      "updatedAt": "2026-06-12T14:45:01.791Z"
+    },
+    "durable-objects": {
+      "source": "cloudflare/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/cloudflare/skills.git",
+      "skillPath": "skills/durable-objects/SKILL.md",
+      "skillFolderHash": "72810f48414f2e68d0aa65a8895f749c959dea91",
+      "installedAt": "2026-06-12T14:45:01.792Z",
+      "updatedAt": "2026-06-12T14:45:01.792Z"
+    },
+    "sandbox-sdk": {
+      "source": "cloudflare/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/cloudflare/skills.git",
+      "skillPath": "skills/sandbox-sdk/SKILL.md",
+      "skillFolderHash": "4d90eab74b6f49050c92b95ba635bc99c41671e9",
+      "installedAt": "2026-06-12T14:45:01.793Z",
+      "updatedAt": "2026-06-12T14:45:01.793Z"
+    },
+    "workers-best-practices": {
+      "source": "cloudflare/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/cloudflare/skills.git",
+      "skillPath": "skills/workers-best-practices/SKILL.md",
+      "skillFolderHash": "7dd384e79c76d3e388dfe53e12e93642679ff1fd",
+      "installedAt": "2026-06-12T14:45:01.794Z",
+      "updatedAt": "2026-06-12T14:45:01.794Z"
+    },
+    "wrangler": {
+      "source": "cloudflare/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/cloudflare/skills.git",
+      "skillPath": "skills/wrangler/SKILL.md",
+      "skillFolderHash": "45cc198b2aad3f06e8abf91333f55fbe7579f659",
+      "installedAt": "2026-06-12T14:45:01.794Z",
+      "updatedAt": "2026-06-12T14:45:01.794Z"
+    },
+    "cloudflare-email-service": {
+      "source": "cloudflare/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/cloudflare/skills.git",
+      "skillPath": "skills/cloudflare-email-service/SKILL.md",
+      "skillFolderHash": "af7bd16246149247d4b699382d951dc376491bac",
+      "installedAt": "2026-06-12T14:45:01.795Z",
+      "updatedAt": "2026-06-12T14:45:01.795Z"
     }
   },
   "lastSelectedAgents": [
     "amp",
+    "antigravity",
+    "antigravity-cli",
     "cline",
     "codex",
     "cursor",
+    "deepagents",
     "gemini-cli",
     "github-copilot",
-    "kimi-cli",
+    "kimi-code-cli",
     "opencode",
+    "warp",
+    "zed",
     "claude-code"
   ],
   "dismissed": {
